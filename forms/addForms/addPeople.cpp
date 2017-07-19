@@ -1,3 +1,4 @@
+#if 0
 //---------------------------------------------------------------------------
 #include <vcl.h>
 #pragma hdrstop
@@ -255,4 +256,4 @@ void __fastcall TfmPerson::edAgeKeyPress(TObject *Sender, char &Key)
 	//todo, nur nummerische Tasten erlauben
 	}
 //---------------------------------------------------------------------------
-
+#endif

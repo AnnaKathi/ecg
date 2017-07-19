@@ -11,23 +11,35 @@ object fmMain: TfmMain
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
-  object Button1: TButton
-    Left = 40
-    Top = 32
-    Width = 75
-    Height = 25
-    Caption = 'base people'
-    TabOrder = 0
-    OnClick = Button1Click
+  object StatusBar: TStatusBar
+    Left = 0
+    Top = 589
+    Width = 729
+    Height = 19
+    Panels = <
+      item
+        Width = 250
+      end
+      item
+        Width = 250
+      end
+      item
+        Width = 250
+      end>
+    ExplicitLeft = 432
+    ExplicitTop = 480
+    ExplicitWidth = 0
   end
-  object pnPeople: TPanel
+  object tStartup: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = tStartupTimer
     Left = 16
-    Top = 88
-    Width = 353
-    Height = 457
-    Caption = 'pnPeople'
-    TabOrder = 1
+    Top = 16
   end
 end

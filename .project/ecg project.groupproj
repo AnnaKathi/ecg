@@ -4,9 +4,9 @@
     </PropertyGroup>
     <ItemGroup>
         <Projects Include="..\forms\ecg.cbproj">
-            <Dependencies>..\libs\db\mysql.cbproj;..\libs\core\ecgcore.cbproj</Dependencies>
+            <Dependencies>..\libs\db\ecgmysql.cbproj;..\libs\core\ecgcore.cbproj</Dependencies>
         </Projects>
-        <Projects Include="..\libs\db\mysql.cbproj">
+        <Projects Include="..\libs\db\ecgmysql.cbproj">
             <Dependencies/>
         </Projects>
         <Projects Include="..\libs\core\ecgcore.cbproj">
@@ -20,23 +20,23 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="ecg" DependsOnTargets="mysql;ecgcore">
+    <Target Name="ecg" DependsOnTargets="ecgmysql;ecgcore">
         <MSBuild Projects="..\forms\ecg.cbproj"/>
     </Target>
-    <Target Name="ecg:Clean" DependsOnTargets="mysql:Clean;ecgcore:Clean">
+    <Target Name="ecg:Clean" DependsOnTargets="ecgmysql:Clean;ecgcore:Clean">
         <MSBuild Projects="..\forms\ecg.cbproj" Targets="Clean"/>
     </Target>
-    <Target Name="ecg:Make" DependsOnTargets="mysql:Make;ecgcore:Make">
+    <Target Name="ecg:Make" DependsOnTargets="ecgmysql:Make;ecgcore:Make">
         <MSBuild Projects="..\forms\ecg.cbproj" Targets="Make"/>
     </Target>
-    <Target Name="mysql">
-        <MSBuild Projects="..\libs\db\mysql.cbproj"/>
+    <Target Name="ecgmysql">
+        <MSBuild Projects="..\libs\db\ecgmysql.cbproj"/>
     </Target>
-    <Target Name="mysql:Clean">
-        <MSBuild Projects="..\libs\db\mysql.cbproj" Targets="Clean"/>
+    <Target Name="ecgmysql:Clean">
+        <MSBuild Projects="..\libs\db\ecgmysql.cbproj" Targets="Clean"/>
     </Target>
-    <Target Name="mysql:Make">
-        <MSBuild Projects="..\libs\db\mysql.cbproj" Targets="Make"/>
+    <Target Name="ecgmysql:Make">
+        <MSBuild Projects="..\libs\db\ecgmysql.cbproj" Targets="Make"/>
     </Target>
     <Target Name="ecgcore">
         <MSBuild Projects="..\libs\core\ecgcore.cbproj"/>
@@ -48,13 +48,13 @@
         <MSBuild Projects="..\libs\core\ecgcore.cbproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="ecg;mysql;ecgcore"/>
+        <CallTarget Targets="ecg;ecgmysql;ecgcore"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="ecg:Clean;mysql:Clean;ecgcore:Clean"/>
+        <CallTarget Targets="ecg:Clean;ecgmysql:Clean;ecgcore:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="ecg:Make;mysql:Make;ecgcore:Make"/>
+        <CallTarget Targets="ecg:Make;ecgmysql:Make;ecgcore:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

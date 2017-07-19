@@ -16,8 +16,11 @@
 class PACKAGE cMySql : public cBase
 	{
 public:
-	cMySql();
+	static  cMySql& getRef();
 	~cMySql();
+
+	void 	init();
+	void 	shutdown();
 
 	bool 	create();
 	bool 	drop();
@@ -46,8 +49,10 @@ __property cMySqlDescDb&   postures    = { read=get_postures     };
 __property cMySqlDescDb&   places      = { read=get_places       };
 
 private:
+	cMySql();
+
 	cTools			ftools;
-	cMySqlWork*		fwork;
+	cMySqlWork&		fwork;
 
 	cMySqlEcgData*	fecg;
 	cMySqlEcgData&  get_ecg();

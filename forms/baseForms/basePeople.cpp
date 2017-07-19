@@ -1,3 +1,4 @@
+#if 0
 //---------------------------------------------------------------------------
 #include <vcl.h>
 #pragma hdrstop
@@ -272,4 +273,4 @@ void __fastcall TfmBasePeople::lvPeopleDblClick(TObject *Sender)
 		; //todo
 	}
 //---------------------------------------------------------------------------
-
+#endif

@@ -22,7 +22,7 @@ struct sPeople
 class PACKAGE cMySqlPeople : public cBase
 	{
 public:
-	cMySqlPeople(cMySqlWork& worker);
+	cMySqlPeople();
 	~cMySqlPeople();
 
 	//-- Daten laden
@@ -56,7 +56,7 @@ private:
 	sPeople			fdata;
 	sPeople			get_data();
 
-	cMySqlWork*		fwork;
+	cMySqlWork&		fwork;
 
 	MYSQL_RES*  	fres; //SQL-Daten
 	MYSQL_ROW		frow;

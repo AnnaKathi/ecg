@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.815,X:\$user\ms\documents\Embarcadero\Studio\Projekte\ProjectGroup1.groupproj=D:\src\ecg\inc\ecg project.groupproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.815,D:\src\ecg\inc\ecg project.groupproj=X:\$user\ms\documents\Embarcadero\Studio\Projekte\ProjectGroup1.groupproj</Transaction>
   </Transactions>
 	<Default.Personality>
 		<Projects ActiveProject="S:\Anna\src\ecg\forms\ecg.cbproj"/>

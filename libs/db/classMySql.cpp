@@ -6,30 +6,73 @@
 #include "classMySql.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
-cMySql __export fmysql;
+INSTALL_GLOBALVAR_GUARD(cMySql, myptr)
+
+/*
+namespace {
+	cMySql* myptr;
+	struct globalvar_guard
+		{
+		friend cMySql;
+
+		globalvar_guard()
+			{
+			}
+
+		~globalvar_guard()
+			{
+			if (myptr)
+				{
+				delete myptr;
+				myptr = 0;
+				}
+			}
+		};
+	globalvar_guard _guard;
+	}
+*/
+//---------------------------------------------------------------------------
+cMySql& cMySql::getRef()
+	{
+	if (myptr == 0)
+		{
+		myptr = new cMySql();
+		}
+	return *myptr;
+	}
 //---------------------------------------------------------------------------
 cMySql::cMySql()
+	: cBase()
+    , fwork(cMySqlWork::getRef())
 	{
-	fwork     = new cMySqlWork();
-	fecg      = new cMySqlEcgData(*fwork);
-	fpeople   = new cMySqlPeople(*fwork);
-	fsessions = new cMySqlSession(*fwork);
-	ffeatures = new cMySqlFeature(*fwork);
+	}
+//---------------------------------------------------------------------------
+void cMySql::init()
+	{
+	//todo -oms: bitte nach refac aus klasse entfernern
+	fecg      = new cMySqlEcgData(fwork);
+	fpeople   = new cMySqlPeople();
+	fsessions = new cMySqlSession(fwork);
+	ffeatures = new cMySqlFeature(fwork);
 
-	fdiseases    = new cMySqlDescDb(*fwork, "diseases");
-	fplaces      = new cMySqlDescDb(*fwork, "places");
-	fresearchers = new cMySqlDescDb(*fwork, "researchers");
-	fpostures    = new cMySqlDescDb(*fwork, "postures");
-	fstates      = new cMySqlDescDb(*fwork, "states");
-	fpositions   = new cMySqlDescDb(*fwork, "positions");
-	falgpreproc  = new cMySqlDescDb(*fwork, "algpreprocessing");
-	falgrpeaks   = new cMySqlDescDb(*fwork, "algrpeaks");
-	falgfeatures = new cMySqlDescDb(*fwork, "algfeatures");
+	fdiseases    = new cMySqlDescDb(fwork, "diseases");
+	fplaces      = new cMySqlDescDb(fwork, "places");
+	fresearchers = new cMySqlDescDb(fwork, "researchers");
+	fpostures    = new cMySqlDescDb(fwork, "postures");
+	fstates      = new cMySqlDescDb(fwork, "states");
+	fpositions   = new cMySqlDescDb(fwork, "positions");
+	falgpreproc  = new cMySqlDescDb(fwork, "algpreprocessing");
+	falgrpeaks   = new cMySqlDescDb(fwork, "algrpeaks");
+	falgfeatures = new cMySqlDescDb(fwork, "algfeatures");
 	}
 //---------------------------------------------------------------------------
 cMySql::~cMySql()
 	{
-	if (fwork)     delete fwork;
+	}
+//---------------------------------------------------------------------------
+void cMySql::shutdown()
+	{
+//	if (fwork)     delete fwork;
 	if (fecg)      delete fecg;
 	if (fpeople)   delete fpeople;
 	if (fsessions) delete fsessions;
@@ -45,8 +88,8 @@ cMySql::~cMySql()
 bool cMySql::create()
 	{
 	//erstellt die komplette (leere) Datenbank
-	if (!fwork->script("create_all_databases"))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.script("create_all_databases"))
+		return fail(fwork.error_code, fwork.error_msg);
 
 	if (Application->MessageBox(
 			L"Möchtest Du die Datenbank mit Dummy-Daten für die Grunddefinitionen "
@@ -56,8 +99,8 @@ bool cMySql::create()
 		MB_YESNO) == IDYES)
 		{
 		//füllt die Datenbank mit Dummy-Datensätzen
-		if (!fwork->script("insert_dummy_data_basic"))
-			return fail(fwork->error_code, fwork->error_msg);
+		if (!fwork.script("insert_dummy_data_basic"))
+			return fail(fwork.error_code, fwork.error_msg);
 		}
 
 	if (Application->MessageBox(
@@ -67,8 +110,8 @@ bool cMySql::create()
 		MB_YESNO) == IDYES)
 		{
 		//füllt die Datenbank mit Dummy-Datensätzen
-		if (!fwork->script("insert_dummy_data_sessions"))
-			return fail(fwork->error_code, fwork->error_msg);
+		if (!fwork.script("insert_dummy_data_sessions"))
+			return fail(fwork.error_code, fwork.error_msg);
 		}
 
 	return ok();
@@ -95,7 +138,7 @@ bool cMySql::drop()
 			return false;
 
 		String q = "DROP DATABASE `ecg`";
-		if (!fwork->send(q))
+		if (!fwork.send(q))
 			return fail(error_code, error_msg);
 
 		Application->MessageBox(L"Datenbank gelöscht", L"Erfolgreich", MB_OK);
@@ -107,10 +150,10 @@ bool cMySql::drop()
 bool cMySql::dbExists()
 	{
 	String q = "SHOW DATABASES like 'ecg'";
-	if (!fwork->query(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.query(q))
+		return fail(fwork.error_code, fwork.error_msg);
 
-	if (fwork->num_rows > 0) //Datenbank gibt es
+	if (fwork.num_rows > 0) //Datenbank gibt es
 		return true;
 	else
 		return false;
@@ -120,10 +163,10 @@ bool cMySql::tabExists(String tabelle)
 	{
 	String q = ftools.fmt(L"SHOW TABLES like '%s'", tabelle.c_str());
 
-	if (!fwork->query(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.query(q))
+		return fail(fwork.error_code, fwork.error_msg);
 
-	if (fwork->num_rows > 0) //Tabelle gibt es
+	if (fwork.num_rows > 0) //Tabelle gibt es
 		return true;
 	else
 		return false;
@@ -131,32 +174,32 @@ bool cMySql::tabExists(String tabelle)
 //---------------------------------------------------------------------------
 bool cMySql::open()
 	{
-	if (!fwork->open())
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.open())
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
 //---------------------------------------------------------------------------
 bool cMySql::openWithoutDb()
 	{
-	if (!fwork->openWithoutDb())
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.openWithoutDb())
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
 //---------------------------------------------------------------------------
 bool cMySql::close()
 	{
-	if (!fwork->close())
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.close())
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
 //---------------------------------------------------------------------------
 bool cMySql::listTabs(TListView* lv)
 	{
-	if (!fwork->listIn(lv))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.listIn(lv))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
     	return ok();
 	}

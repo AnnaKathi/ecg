@@ -26,6 +26,21 @@ enum BASE_ERROR_CODES
 	CE_EXAMPLE,			// example of real error code if necessary
 	};
 //---------------------------------------------------------------------------
+/*
+ * Dieses Macro legt im unnamed Namespace die globale Variable VAR vom Typ TYPE* an
+ * und installiert einen Wächter.
+ * Der Wächter sorgt dafür, dass die globale Variabel TYPE* VAR bei Programmende
+ * aufgeräumt wird. Sobald der Scope verlassen wird (Programmende), wird der d'tor
+ * aufgerufen.
+ */
+#define INSTALL_GLOBALVAR_GUARD(TYPE, VAR) namespace { \
+    TYPE* VAR; \
+    struct globalvar_guard { \
+        globalvar_guard() {} \
+        ~globalvar_guard() { if (VAR) delete VAR, VAR = 0; } \
+    }; globalvar_guard _guard; }
+
+//---------------------------------------------------------------------------
 //! Basisklasse zur Fehler-Vererbung
 /*! Die Klassen des Projekt werden grundsätzlich von der Klasse cBase abgeleitet.
  *  Diese kapselt eine Fehler-Nummer und -Nachricht, welche von den abgeleiteten

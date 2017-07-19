@@ -5,13 +5,11 @@
 #include <tchar.h>
 //---------------------------------------------------------------------------
 USEFORM("ecg_main.cpp", fmMain);
-USEFORM("baseForms\basePeople.cpp", fmBasePeople);
 USEFORM("addForms\addPeople.cpp", fmPerson);
+USEFORM("baseForms\basePeople.cpp", fmBasePeople);
 //---------------------------------------------------------------------------
 int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 {
-String fp = ExtractFilePath(ParamStr(0));
-
 	try
 	{
 		Application->Initialize();

@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ILINK_LibraryPath>$(ecg)\out\lib;$(ILINK_LibraryPath)</ILINK_LibraryPath>
-        <BPILibOutputDir>D:\src\ecg\out\lib\</BPILibOutputDir>
+        <BPILibOutputDir>$(ecg)\out\lib\</BPILibOutputDir>
         <IncludePath>$(ecg);$(IncludePath)</IncludePath>
         <FinalOutputDir>$(ecg)\out\bin</FinalOutputDir>
         <IntermediateOutputDir>$(ecg)\out\tmp</IntermediateOutputDir>

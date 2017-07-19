@@ -10,9 +10,10 @@
 #define TABLE  "subjects"
 #define SUBDIS "subdiseases"
 //---------------------------------------------------------------------------
-cMySqlPeople::cMySqlPeople(cMySqlWork& worker)
+cMySqlPeople::cMySqlPeople()
+	: cBase()
+	, fwork(cMySqlWork::getRef())
 	{
-	fwork = &worker;
 	}
 //---------------------------------------------------------------------------
 cMySqlPeople::~cMySqlPeople()
@@ -21,11 +22,11 @@ cMySqlPeople::~cMySqlPeople()
 //---------------------------------------------------------------------------
 bool cMySqlPeople::doQuery(String q)
 	{
-	if (!fwork->query(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.query(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		{
-		fres = fwork->getResult();
+		fres = fwork.getResult();
 		return ok();
 		}
 	}
@@ -50,26 +51,26 @@ bool cMySqlPeople::parse()
 bool cMySqlPeople::get(int person)
 	{
 	String q = "SELECT * FROM `" + String(TABLE) + "` WHERE `ID` = " + String(person);
-	if (!fwork->query(q))
+	if (!fwork.query(q))
 		return false;
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	frow = mysql_fetch_row(fres);
 	return parse();
 	}
 //---------------------------------------------------------------------------
 bool cMySqlPeople::loadTable(String order) //order ist vorbesetzt mit ""
 	{
-	if (!fwork->loadTable(TABLE, order))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.loadTable(TABLE, order))
+		return fail(fwork.error_code, fwork.error_msg);
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	return ok();
 	}
 //---------------------------------------------------------------------------
 bool cMySqlPeople::nextRow()
 	{
-	if (!fwork->isReady())
+	if (!fwork.isReady())
 		return fail(1, "MySql-Verbindung wurde nicht initialisiert");
 
 	frow = mysql_fetch_row(fres);
@@ -79,10 +80,10 @@ bool cMySqlPeople::nextRow()
 bool cMySqlPeople::getLast()
 	{
 	String q = "SELECT * FROM " + String(TABLE) + " ORDER BY ID DESC LIMIT 1";
-	if (!fwork->query(q))
+	if (!fwork.query(q))
 		return false;
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	frow = mysql_fetch_row(fres);
 	return parse();
 	}
@@ -105,8 +106,8 @@ bool cMySqlPeople::insert(sPeople data)
 	q+= "'" + String(data.weight)    + "'";
 	q+= ")";
 
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		{
 		//Datensatz wieder reinladen, damit aufrufende Komponenten damit
@@ -127,8 +128,8 @@ bool cMySqlPeople::update(sPeople data)
 	q+= "Weight='" + String(data.weight) + "'";
 	q+= "WHERE ID=" + String(data.ident);
 
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
@@ -137,8 +138,8 @@ bool cMySqlPeople::saveDiseases(int person, sarray_t diseases)
 	{
 	//zuerst die bestehenden Verknüpfungen löschen, dann die Werte abspeichern
 	String q = "DELETE FROM `" + String(SUBDIS) + "` WHERE `subjects_ID` = " + String(person);
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 
 	for (sarray_itr itr = diseases.begin(); itr != diseases.end(); itr++)
 		{
@@ -149,8 +150,8 @@ bool cMySqlPeople::saveDiseases(int person, sarray_t diseases)
 		q+= "'" + String(v[0])   + "'";
 		q+= ")";
 
-		if (!fwork->send(q))
-			return fail(fwork->error_code, fwork->error_msg);
+		if (!fwork.send(q))
+			return fail(fwork.error_code, fwork.error_msg);
 		}
 	return ok();
 	}
@@ -165,11 +166,11 @@ String cMySqlPeople::getNameOf(int person)
 
 	String name = "";
 	String q = "SELECT * FROM `" + String(TABLE) + "` WHERE `ID` = " + String(person);
-	if (!fwork->query(q))
+	if (!fwork.query(q))
 		name = "- nicht gefunden (" + String(person) + ") -";
 	else
 		{
-		fres = fwork->getResult();
+		fres = fwork.getResult();
 		frow = mysql_fetch_row(fres);
 		if (frow == NULL) return "";
 
@@ -187,10 +188,10 @@ sarray_t cMySqlPeople::getDiseasesOf(int person)
 	MYSQL_RES* res_old = fres; //aktuelle Position speichern
 
 	String q = "SELECT * FROM `" + String(SUBDIS) + "` WHERE `Subjects_ID` = " + String(person);
-	if (fwork->query(q))
+	if (fwork.query(q))
 		{
 		int count = 0;
-		fres = fwork->getResult();
+		fres = fwork.getResult();
 		while ((frow = mysql_fetch_row(fres)) != NULL)
 			{
 			result[count].push_back(atoi(frow[1]));
@@ -206,7 +207,7 @@ int cMySqlPeople::getSize()
 	{
 	if (!loadTable())
 		{
-		fail(fwork->error_code, fwork->error_msg);
+		fail(fwork.error_code, fwork.error_msg);
 		return -1;
 		}
 
@@ -222,7 +223,7 @@ bool cMySqlPeople::listInCombo(TComboBox* cb, int mode) //mode ist mit 0 vorbese
 	//Alle Personen aus der DB in der ComboBox anzeigen, der mode bestimmt
 	//was angezeigt wird
 	if (!loadTable("Lastname ASC"))
-		return fail(fwork->error_code, fwork->error_msg);
+		return fail(fwork.error_code, fwork.error_msg);
 
 	cb->Items->Clear();
 	String pers;
@@ -245,8 +246,8 @@ bool cMySqlPeople::listInCombo(TComboBox* cb, int mode) //mode ist mit 0 vorbese
 bool cMySqlPeople::deleteByIdent(int ident)
 	{
 	String q = "DELETE FROM `" + String(TABLE) + "` WHERE `ID` = " + String(ident);
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
