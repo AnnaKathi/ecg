@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.181,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.162,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
+    <Transaction>2017.07.18 15:49:42.282,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
+    <Transaction>2017.07.18 15:49:46.993,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\File1.cpp</Transaction>
+    <Transaction>2017.07.18 15:50:12.471,D:\src\ecg\libs\db\mysql.cpp=X:\$user\ms\documents\Embarcadero\Studio\Projekte\File1.cpp</Transaction>
+    <Transaction>2017.07.18 15:50:20.106,D:\src\ecg\libs\db\mysql_pch.h=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
+    <Transaction>2017.07.18 15:50:24.797,D:\src\ecg\libs\db\mysql.cbproj=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2.cbproj</Transaction>
+    <Transaction>2017.07.18 15:51:51.155,=D:\src\ecg\out\lib\ecgcore.lib</Transaction>
+    <Transaction>2017.07.18 15:52:31.838,=D:\src\ecg\libs\db\classMySql.cpp</Transaction>
+    <Transaction>2017.07.18 15:52:31.845,=D:\src\ecg\libs\db\classMySql_DescDb.cpp</Transaction>
+    <Transaction>2017.07.18 15:52:31.852,=D:\src\ecg\libs\db\classMySql_EcgData.cpp</Transaction>
+    <Transaction>2017.07.18 15:52:31.858,=D:\src\ecg\libs\db\classMySql_Features.cpp</Transaction>
+    <Transaction>2017.07.18 15:52:31.866,=D:\src\ecg\libs\db\classMySql_People.cpp</Transaction>
+    <Transaction>2017.07.18 15:52:31.872,=D:\src\ecg\libs\db\classMySql_Session.cpp</Transaction>
+    <Transaction>2017.07.18 15:52:31.879,=D:\src\ecg\libs\db\classMySql_Work.cpp</Transaction>
+    <Transaction>2017.07.18 15:56:16.785,=D:\src\ecg\out\lib\libmysql.lib</Transaction>
+  </Transactions>
+</BorlandProject>

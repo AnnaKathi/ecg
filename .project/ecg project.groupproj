@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{0345CB4F-DDFA-4345-A6A7-8852BC6B7C84}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="..\forms\ecg.cbproj">
+            <Dependencies>..\libs\db\mysql.cbproj;..\libs\core\ecgcore.cbproj</Dependencies>
+        </Projects>
+        <Projects Include="..\libs\db\mysql.cbproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\libs\core\ecgcore.cbproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ecg" DependsOnTargets="mysql;ecgcore">
+        <MSBuild Projects="..\forms\ecg.cbproj"/>
+    </Target>
+    <Target Name="ecg:Clean" DependsOnTargets="mysql:Clean;ecgcore:Clean">
+        <MSBuild Projects="..\forms\ecg.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ecg:Make" DependsOnTargets="mysql:Make;ecgcore:Make">
+        <MSBuild Projects="..\forms\ecg.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="mysql">
+        <MSBuild Projects="..\libs\db\mysql.cbproj"/>
+    </Target>
+    <Target Name="mysql:Clean">
+        <MSBuild Projects="..\libs\db\mysql.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="mysql:Make">
+        <MSBuild Projects="..\libs\db\mysql.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="ecgcore">
+        <MSBuild Projects="..\libs\core\ecgcore.cbproj"/>
+    </Target>
+    <Target Name="ecgcore:Clean">
+        <MSBuild Projects="..\libs\core\ecgcore.cbproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ecgcore:Make">
+        <MSBuild Projects="..\libs\core\ecgcore.cbproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ecg;mysql;ecgcore"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ecg:Clean;mysql:Clean;ecgcore:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ecg:Make;mysql:Make;ecgcore:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

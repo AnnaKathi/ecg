@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.466,D:\src\ecg\forms\ecg_main.h=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Unit2.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.181,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.537,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.319,=D:\src\ecg\forms\addForms\addPeople.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.064,=D:\src\ecg\out\lib\ecgcore.lib</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.956,=D:\src\ecg\forms\baseForms\basePeople.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.162,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.156,D:\src\ecg\forms\ecg_pch.h=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.675,D:\src\ecg\forms\ecg.cbproj=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.076,=D:\src\ecg\out\lib\mysql.lib</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.769,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.466,D:\src\ecg\forms\ecg_main.cpp=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.466,D:\src\ecg\forms\ecg_main.dfm=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Unit2.dfm</Transaction>
+  </Transactions>
+	<ProjectSortOrder AutoSort="0" SortType="0">
+    <File Path="..\.project\ecg.optset"/>
+    <VirtualFolder ID="{4F4162A4-4E00-490A-9507-20DAFE4694A7}"/>
+    <File Path="..\out\lib\ecgcore.lib"/>
+    <File Path="..\out\lib\mysql.lib"/>
+    <VirtualFolder ID="{4FB926BD-CF5D-486E-AA3B-409DEC9396C5}"/>
+    <File Path="baseForms\basePeople.cpp"/>
+    <File Path="baseForms\basePeople.cpp"/>
+    <File Path="baseForms\basePeople.dfm"/>
+    <File Path="baseForms\basePeople.h"/>
+    <VirtualFolder ID="{2D4DF9F4-E40D-40BD-9228-ED35DB8526BE}"/>
+    <File Path="addForms\addPeople.cpp"/>
+    <File Path="addForms\addPeople.cpp"/>
+    <File Path="addForms\addPeople.dfm"/>
+    <File Path="addForms\addPeople.h"/>
+    <File Path="ecg.cpp"/>
+    <File Path="ecg_pch.h"/>
+    <File Path="ecg_main.cpp"/>
+    <File Path="ecg_main.cpp"/>
+    <File Path="ecg_main.dfm"/>
+    <File Path="ecg_main.h"/>
+  </ProjectSortOrder>
+</BorlandProject>

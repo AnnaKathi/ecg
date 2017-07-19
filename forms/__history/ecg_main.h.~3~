@@ -1,0 +1,22 @@
+//---------------------------------------------------------------------------
+
+#ifndef ecg_mainH
+#define ecg_mainH
+//---------------------------------------------------------------------------
+#include <System.Classes.hpp>
+#include <Vcl.Controls.hpp>
+#include <Vcl.StdCtrls.hpp>
+#include <Vcl.Forms.hpp>
+//---------------------------------------------------------------------------
+class TfmMain : public TForm
+{
+__published:	// Von der IDE verwaltete Komponenten
+	TEdit *Edit1;
+private:	// Benutzer-Deklarationen
+public:		// Benutzer-Deklarationen
+	__fastcall TfmMain(TComponent* Owner);
+};
+//---------------------------------------------------------------------------
+extern PACKAGE TfmMain *fmMain;
+//---------------------------------------------------------------------------
+#endif
