@@ -115,12 +115,21 @@ object fmMain: TfmMain
   end
   object btTestEcg: TButton
     Left = 8
-    Top = 216
+    Top = 200
     Width = 170
     Height = 25
     Caption = 'Test Ecg-Klasse'
     TabOrder = 7
     OnClick = btTestEcgClick
+  end
+  object btEcgViewer: TButton
+    Left = 8
+    Top = 272
+    Width = 170
+    Height = 25
+    Caption = 'Ecg Viewer'
+    TabOrder = 8
+    OnClick = btEcgViewerClick
   end
   object tStartup: TTimer
     Enabled = False

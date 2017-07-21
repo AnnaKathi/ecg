@@ -34,6 +34,7 @@ __published:	// Von der IDE verwaltete Komponenten
 	TButton *btTestData;
 	TButton *btTestEcg;
 	TImage *img4;
+	TButton *btEcgViewer;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall tStartupTimer(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
@@ -44,6 +45,7 @@ __published:	// Von der IDE verwaltete Komponenten
 	void __fastcall btTestArrayClick(TObject *Sender);
 	void __fastcall btTestDataClick(TObject *Sender);
 	void __fastcall btTestEcgClick(TObject *Sender);
+	void __fastcall btEcgViewerClick(TObject *Sender);
 
 private:
 	cCsv        fcsv;   //nur zu Testzwecken, später wieder entfernen

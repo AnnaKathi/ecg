@@ -4,6 +4,8 @@
 
 #include <libs/db/classMySql.h>
 
+#include "ecg_viewer.h"
+
 #include "ecg_main.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -433,6 +435,11 @@ void __fastcall TfmMain::btTestEcgClick(TObject *Sender)
 	farray.redisplay(heart, img4);
 
 	ln("Test-Ende");
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btEcgViewerClick(TObject *Sender)
+	{
+    DlgEcgViewer(this);
 	}
 //---------------------------------------------------------------------------
 
