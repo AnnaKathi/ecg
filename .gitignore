@@ -16,7 +16,6 @@ latex/
 *.dsk
 *.local
 *.stat
-*.zip
 *.pch
 *.#??
 *.~*
