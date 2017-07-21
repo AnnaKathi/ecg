@@ -33,7 +33,6 @@ void __fastcall TfmMain::tStartupTimer(TObject *Sender)
 	tStartup->Enabled = false;
 	Cursor = crHourGlass;
 
-
 	//Testschalter NoMySql berücksichtigen, ermöglichst einen Testbetrieb ohne MySql
 	TIniFile* Ini = new TIniFile(ftools.GetIniFile());
 	bNoMySql = Ini->ReadBool("MySql", "NoMySql", false);
@@ -107,7 +106,7 @@ bool TfmMain::setupDatabase()
 		{
 		Application->MessageBox(
 			ftools.fmt(
-				"Die MySql-Datenbankverbindung konnte nicht initialisiert werden. "
+				"Die MySql-Datenbankverbindung konnte nicht geprüft werden. "
 				"Die Funktion meldet: %s", fmysql.error_msg.c_str()
 				).c_str(),
 			L"Fehler beim Öffnen der Datenbank",
@@ -136,7 +135,7 @@ bool TfmMain::setupDatabase()
 			Application->MessageBox(
 				ftools.fmt(
 					"Die MySql-Datenbank 'ecg' konnte nicht initialisiert werden. "
-					"Die Funktion meldet: %s", fmysql.error_msg).c_str(),
+					"Die Funktion meldet: %s", fmysql.error_msg.c_str()).c_str(),
 				L"Fehler beim Öffnen der Datenbank",
 				MB_OK);
 			return false;
@@ -171,7 +170,6 @@ void TfmMain::setStatus(String status, int panel) //panel ist vorbesetzt mit 0
 //---------------------------------------------------------------------------
 void TfmMain::setDbInfo()
 	{
-    int test = fmysql.people.getSize();
 	if (bNoMySql)
 		setStatus("### MySql-Datenbank wird nicht verwendet ###", 1);
 	else
@@ -223,6 +221,7 @@ void __fastcall TfmMain::btTestMySqlClick(TObject *Sender)
 		{
 		ln(ftools.fmt("\t## Fehler, Person konnte nicht gespeichert werden"));
 		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
+		return;
 		}
 
 	int id = pp.row.ident;
@@ -235,6 +234,7 @@ void __fastcall TfmMain::btTestMySqlClick(TObject *Sender)
 		{
 		ln(ftools.fmt("\t## Fehler, Person konnte nicht geladen werden"));
 		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
+		return;
 		}
 
 	if (pp.deleteByIdent(id))
@@ -243,7 +243,194 @@ void __fastcall TfmMain::btTestMySqlClick(TObject *Sender)
 		{
 		ln(ftools.fmt("\t## Fehler, Person konnte nicht gelöscht werden"));
 		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
+		return;
 		}
+
+	ln("Test-Ende");
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btTestCsvClick(TObject *Sender)
+	{
+	ln(ftools.fmt("Test Klasse 'cCsv'"));
+	String file = "S:\\Anna\\Ecg-Daten\\Nora liegend.txt";
+	ln(ftools.fmt("\tEinzulesende Datei: %s", file));
+
+	if (fcsv.OpenFile(file, formatADS, "\t", 3))
+		ln(ftools.fmt("\tDatei erfolgreich geöffnet"));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, Datei konnte nicht geöffnet werden."));
+		ln(ftools.fmt("\tcCsv meldet: %s", fcsv.error_msg));
+		return;
+		}
+
+	if (fcsv.StartAt(0))
+		ln(ftools.fmt("\tDatei erfolgreich begonnen"));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, Datei konnte nicht gestartet werden."));
+		ln(ftools.fmt("\tcCsv meldet: %s", fcsv.error_msg));
+		return;
+		}
+
+	int count = 0;
+	ln(ftools.fmt("\tDrucke 10 Testzeilen..."));
+	while (fcsv.NextUntil(100))
+		{
+		count++;
+		if (count > 10) break;
+
+		ln(ftools.fmt(
+			"\t\t%02d: %.8f \t%.8f \t%.8f",
+				fcsv.getLineNo(),
+				fcsv.getChannel(1),
+				fcsv.getChannel(2),
+				fcsv.getChannel(3)));
+		}
+
+	fcsv.CloseFile();
+	ln("Test-Ende");
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btTestMathClick(TObject *Sender)
+	{
+	ln(ftools.fmt("Test Klasse 'cMath'"));
+
+	iarray_t array;
+	Randomize();
+
+	int wert;
+	for (int i = 0; i < 100; i++)
+		{
+		wert = Random(100);
+		array[i].push_back(i);
+		array[i].push_back(wert);
+		}
+
+	String line = "\t";
+	for (int i = 0; i < 100; i++)
+		line += String(array[i][1]) + ", ";
+	ln(line);
+
+	array = fmath.resort(array, true);
+	line = "\t";
+	for (iarray_itr itr = array.begin(); itr != array.end(); itr++)
+		{
+		ilist_t v = itr->second;
+		line += String(v[1]) + ", ";
+        }
+    ln(line);
+
+	array = fmath.calcDerivate(array);
+	line = "\t";
+	for (iarray_itr itr = array.begin(); itr != array.end(); itr++)
+		{
+		ilist_t v = itr->second;
+		line += String(v[1]) + ", ";
+		}
+	ln(line);
+
+	ln("Test-Ende");
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btTestArrayClick(TObject *Sender)
+	{
+	ln(ftools.fmt("Test Klasse 'cArray'"));
+
+	iarray_t array;
+	Randomize();
+
+	int wert;
+	for (int i = 0; i < 100; i++)
+		{
+		wert = Random(100);
+		array[i].push_back(i);
+		array[i].push_back(wert);
+		}
+
+	String line = "\t";
+	for (iarray_itr itr = array.begin(); itr != array.end(); itr++)
+		{
+		ilist_t v = itr->second;
+		line += String(v[1]) + ", ";
+		}
+	ln(line);
+
+	farray.redisplay(array, img1);
+	double av = farray.calcAvWert(array);
+	ln(ftools.fmt("\tDurchschnittswert Original: %.4f", av));
+
+	ln("Test-Ende");
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btTestDataClick(TObject *Sender)
+	{
+	ln(ftools.fmt("Test Klasse 'cData'"));
+
+	String file = "S:\\Anna\\Ecg-Daten\\Nora liegend.txt";
+	if (fdata.getFile(file, formatADS, "\t", 3, 0, 3000))
+		ln(ftools.fmt("\tDatei erfolgreich eingelesen: %s", file.c_str()));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, Datei konnte nicht geladen werden."));
+		ln(ftools.fmt("\tcData meldet: %s", fdata.error_msg));
+		return;
+		}
+
+	fdata.redisplay(img1);
+
+	iarray_t narray = fdata.normalize(fdata.data_array, 100);
+	farray.redisplay(narray, img2);
+
+	ln("Test-Ende");
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btTestEcgClick(TObject *Sender)
+	{
+	ln(ftools.fmt("Test Klasse 'cEcg'"));
+
+	String file = "S:\\Anna\\Ecg-Daten\\Nora liegend.txt";
+	if (fecg.data.getFile(file, formatADS, "\t", 3, 0, 3000))
+		ln(ftools.fmt("\tDatei erfolgreich eingelesen: %s", file.c_str()));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, Datei konnte nicht geladen werden."));
+		ln(ftools.fmt("\tcEcg meldet: %s", fecg.error_msg));
+		return;
+		}
+
+	fecg.data.redisplay(img1);
+
+	iarray_t rpeaks = fecg.rpeaks.find(fecg.data.data_array, NULL);
+	int n = rpeaks.size();
+	ln(ftools.fmt("\tR-Peaks gefunden: %d", n));
+	if (n <= 0) return;
+
+	farray.displayPoints(fecg.data.data_array, rpeaks, img1);
+
+	if (fecg.data.buildDerivates())
+		ln(ftools.fmt("\tAbleitungen erfolgreich gebildet"));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, die Ableitungen konnten nicht gebildet werden."));
+		ln(ftools.fmt("\tcEcg meldet: %s", fecg.error_msg));
+		return;
+		}
+
+	farray.redisplay(fecg.data.derivate1.deriv_array, img2);
+	farray.redisplay(fecg.data.derivate2.deriv_array, img3);
+
+	iarray_t heart = fecg.heart.calcAvBeat(fecg.data.data_array);
+	if (heart.size() > 0)
+		ln(ftools.fmt("\tStandardherzschlag erfolgreich gebildet"));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, der Standardherzschlag konnten nicht gebildet werden."));
+		ln(ftools.fmt("\tcEcg meldet: %s", fecg.error_msg));
+		return;
+		}
+
+	farray.redisplay(heart, img4);
 
 	ln("Test-Ende");
 	}

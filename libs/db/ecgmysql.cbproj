@@ -139,13 +139,13 @@
             <DependentOn>classMySql_Work.h</DependentOn>
             <BuildOrder>9</BuildOrder>
         </CppCompile>
+        <CppCompile Include="ecgmysql.cpp">
+            <BuildOrder>11</BuildOrder>
+        </CppCompile>
         <PCHCompile Include="ecgmysql_pch.h">
             <BuildOrder>0</BuildOrder>
             <PCH>true</PCH>
         </PCHCompile>
-        <CppCompile Include="mysql.cpp">
-            <BuildOrder>1</BuildOrder>
-        </CppCompile>
         <None Include="mysql_scripts\script_create_all_databases.sql">
             <VirtualFolder>{ECBF3633-C32E-4F21-BAF9-F47041F134BA}</VirtualFolder>
         </None>
@@ -191,8 +191,9 @@
                 </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="3">
-                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin64\cc64250mt.dll" Class="DependencyModule">
-                    <Platform Name="Win64">
+                <DeployFile LocalName="..\..\out\bin\ecgmysql.dll" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>ecgmysql.dll</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -242,14 +243,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin\cc32250mt.dll" Class="DependencyModule">
-                    <Platform Name="Win32">
+                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin64\cc64250mt.dll" Class="DependencyModule">
+                    <Platform Name="Win64">
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\out\bin\ecgmysql.dll" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin\cc32250mt.dll" Class="DependencyModule">
                     <Platform Name="Win32">
-                        <RemoteName>ecgmysql.dll</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

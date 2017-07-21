@@ -44,7 +44,18 @@ String cTools::GetProgramPath()
 //---------------------------------------------------------------------------
 String cTools::GetIniFile()
 	{
-	return GetApplicationPath() + "\\ecg.ini";
+	//Inifile erstellen, falls nicht vorhanden
+	char inifile[MAX_PATH];
+	sprintf(inifile, "%s\\ecg.ini", AnsiString(GetApplicationPath().c_str()));
+
+	if (!FileExists(inifile))
+		{
+		FILE* fp = fopen(AnsiString(inifile).c_str(), "w+");
+		fprintf(fp, "[Ecg]\n");
+		fclose(fp);
+		}
+
+	return String(inifile);
 	}
 //---------------------------------------------------------------------------
 void cTools::FormLoad(TForm* fm)
@@ -254,7 +265,6 @@ void cTools::MsgBox(const String& msg, ...)
 //---------------------------------------------------------------------------
 String cTools::fmt(const wchar_t* msg, ...)
 	{
-    //TODO ms fragen: Umstellen, so dass int (%d) wieder geht
 	wchar_t buffer[512];
 	int     nsiz;
 	va_list argptr;
@@ -272,7 +282,6 @@ String cTools::fmt(const wchar_t* msg, ...)
 //---------------------------------------------------------------------------
 String cTools::fmt(const char* msg, ...)
 	{
-	//TODO ms fragen: Umstellen, so dass int (%d) wieder geht
 	wchar_t buffer[512];
 	int     nsiz;
 	va_list argptr;
@@ -417,14 +426,28 @@ String cTools::GetComputerProzessor()
 	return "";
 	}
 //---------------------------------------------------------------------------
-bool cTools::Log(String msg)
+bool cTools::Log(const char* msg, ...)
 	{
 	String dat = GetApplicationPath() + L"\\ecg.log";
 	FILE* fp = fopen(AnsiString(dat).c_str(), "a+");
 	if (fp == NULL) return false;
 
-	fprintf(fp, "%s\r\n", AnsiString(msg).c_str());
+	wchar_t buffer[512];
+	int     nsiz;
+	va_list argptr;
+
+	va_start(argptr, msg);
+	String wstr = msg;
+	nsiz = vsnwprintf(0, 0, wstr.c_str(), argptr);
+	if (nsiz >= sizeof(buffer)-2) nsiz = sizeof(buffer)-2;
+
+	vsnwprintf(buffer, nsiz, wstr.c_str(), argptr);
+	buffer[nsiz] = 0;
+	va_end(argptr);
+
+	fprintf(fp, "%s\n", buffer);
 	fclose(fp);
 	return true;
 	}
 //---------------------------------------------------------------------------
+

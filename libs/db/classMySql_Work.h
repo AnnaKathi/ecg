@@ -10,6 +10,15 @@
 #include <libs/core/classTools.h>
 #include <libs/etc/mysql/mysql.h>
 //---------------------------------------------------------------------------
+struct sMySqlData
+	{
+	String 	serv;
+	String 	user;
+	String 	pass;
+	String 	data;
+	int 	port;
+	};
+//---------------------------------------------------------------------------
 class PACKAGE cMySqlWork : public cBase
 	{
 public:
@@ -39,11 +48,15 @@ private:
 	cTools			ftools;
 
 	//SQL-Daten
+	sMySqlData      sMySqlData;
 	MYSQL*      	fsql;
 	MYSQL*      	fcon;
 	MYSQL_RES*  	fres;
 	MYSQL_ROW		frow;
 	int				get_num_rows();
+
+	String          error_message;
+	wchar_t* 		error();
 
 	bool			bMySqlConnected;
 

@@ -20,6 +20,21 @@ cMySqlWork& cMySqlWork::getRef()
 //---------------------------------------------------------------------------
 cMySqlWork::cMySqlWork()
 	{
+	bMySqlConnected = false;
+
+	//erst einmal als Klartext aus Ini-Datei lesen, todo: umstellen auf Dialog?
+	TIniFile* Ini = new TIniFile(ftools.GetIniFile());
+	sMySqlData.serv = Ini->ReadString("MySql", "Server", "localhost");
+	sMySqlData.user = Ini->ReadString("MySql", "User",   "root");
+
+	//Passwort kann sich an den versch. AP unterscheiden
+	String pwd = Ini->ReadString("MySql", "Pwd" + ftools.GetComputer(), "");
+	if (pwd == "") pwd = Ini->ReadString("MySql", "Pwd", "");
+	sMySqlData.pass = pwd;
+
+	sMySqlData.data = Ini->ReadString("MySql",  "Data",   "ecg");
+	sMySqlData.port = Ini->ReadInteger("MySql", "Port",   3306);
+	delete Ini;
 	}
 //---------------------------------------------------------------------------
 cMySqlWork::~cMySqlWork()
@@ -28,35 +43,16 @@ cMySqlWork::~cMySqlWork()
 //---------------------------------------------------------------------------
 bool cMySqlWork::open()
 	{
-	TIniFile* Ini = new TIniFile(ftools.GetIniFile());
-
-	bMySqlConnected = false;
-
-	//erst einmal als Klartext aus Ini-Datei lesen, todo: umstellen auf Dialog?
-	String serv = Ini->ReadString("MySql", "Server", "");
-	String user = Ini->ReadString("MySql", "User",   "");
-	String pass = Ini->ReadString("MySql", "Pwd" + ftools.GetComputer(), "");
-	if (pass == "") Ini->ReadString("MySql", "Pwd", "");
-	String data = Ini->ReadString("MySql", "Data",   "");
-
-	int port = Ini->ReadInteger("MySql", "Port", 0);
-	delete Ini;
-
-	//Passwort wird erst einmal im Klartext hinterlegt
-	//todo verschlüsseln und dann hier decrypten
-
-	//todo Werte prüfen.....
-
 	if ((fsql = mysql_init(NULL)) == 0)
 		return fail(1, "Das MYSQL-System kann nicht initialisiert werden!");
 
 	fcon = mysql_real_connect(
 		fsql,
-		AnsiString(serv).c_str(),
-		AnsiString(user).c_str(),
-		AnsiString(pass).c_str(),
-		AnsiString(data).c_str(),
-		port,
+		AnsiString(sMySqlData.serv).c_str(),
+		AnsiString(sMySqlData.user).c_str(),
+		AnsiString(sMySqlData.pass).c_str(),
+		AnsiString(sMySqlData.data).c_str(),
+		sMySqlData.port,
 		NULL,
 		0);
 
@@ -71,40 +67,21 @@ bool cMySqlWork::open()
 //---------------------------------------------------------------------------
 bool cMySqlWork::openWithoutDb()
 	{
-	TIniFile* Ini = new TIniFile(ftools.GetIniFile());
-
-	bMySqlConnected = false;
-
-	//erst einmal als Klartext aus Ini-Datei lesen, todo: umstellen auf Dialog?
-	String serv = Ini->ReadString("MySql", "Server", "");
-	String user = Ini->ReadString("MySql", "User",   "");
-	String pass = Ini->ReadString("MySql", "Pwd" + ftools.GetComputer(), "");
-	if (pass == "") Ini->ReadString("MySql", "Pwd", "");
-	//String data = Ini->ReadString("MySql", "Data",   "");
-
-	int port = Ini->ReadInteger("MySql", "Port", 0);
-	delete Ini;
-
-	//Passwort wird erst einmal im Klartext hinterlegt
-	//todo verschlüsseln und dann hier decrypten
-
-	//todo Werte prüfen.....
-
 	if ((fsql = mysql_init(NULL)) == 0)
 		return fail(1, "Das MYSQL-System kann nicht initialisiert werden!");
 
 	fcon = mysql_real_connect(
 		fsql,
-		AnsiString(serv).c_str(),
-		AnsiString(user).c_str(),
-		AnsiString(pass).c_str(),
+		AnsiString(sMySqlData.serv).c_str(),
+		AnsiString(sMySqlData.user).c_str(),
+		AnsiString(sMySqlData.pass).c_str(),
 		NULL,
-		port,
+		sMySqlData.port,
 		NULL,
 		0);
 
 	if (fcon == NULL)
-		return fail(1, pass + "Fehler beim Verbindungsaufbau! MYSQL meldet: " + String(mysql_error(fsql)));
+		return fail(1, "Fehler beim Verbindungsaufbau! MYSQL meldet: " + String(mysql_error(fsql)));
 	else
 		{
 		bMySqlConnected = true;
@@ -136,10 +113,10 @@ bool cMySqlWork::query(String q)
 		return fail(2, "Datenbank wurde nicht initialisiert");
 
 	if (mysql_real_query(fcon, AnsiString(q).c_str(), q.Length()) != 0)
-		return fail(2, ftools.fmt("Fehler in QUERY: %d", mysql_error(fcon)));
+		return fail(2, ftools.fmt("Fehler in QUERY: %d", error()));
 
 	if ((fres = mysql_store_result(fcon)) == NULL)
-		return fail(2, ftools.fmt("Fehler in STORE_RESULT: %d", mysql_error(fcon)));
+		return fail(2, ftools.fmt("Fehler in STORE_RESULT: %d", error()));
 
 	if (mysql_num_rows(fres) == 0)
 		return ok(); //not: fail(2, msg.c_str());
@@ -153,10 +130,16 @@ bool cMySqlWork::send(String q)
 		return fail(3, "Datenbank wurde nicht initialisiert");
 
 	if (mysql_real_query(fcon, AnsiString(q).c_str(), q.Length()) != 0)
-		return fail(3, ftools.fmt("Fehler in QUERY: %s", mysql_error(fcon)));
+		return fail(3, ftools.fmt("Fehler in QUERY: %s", error()));
 
 	return ok();
 	}
+//---------------------------------------------------------------------------
+wchar_t* cMySqlWork::error()
+	{
+	error_message = mysql_error(fcon);
+	return error_message.c_str();
+    }
 //---------------------------------------------------------------------------
 bool cMySqlWork::script(String script_name)
 	{

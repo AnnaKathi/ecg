@@ -18,6 +18,30 @@ object fmMain: TfmMain
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
+  object img3: TImage
+    Left = 8
+    Top = 467
+    Width = 170
+    Height = 55
+  end
+  object img2: TImage
+    Left = 8
+    Top = 406
+    Width = 170
+    Height = 55
+  end
+  object img1: TImage
+    Left = 8
+    Top = 345
+    Width = 170
+    Height = 55
+  end
+  object img4: TImage
+    Left = 8
+    Top = 528
+    Width = 170
+    Height = 55
+  end
   object StatusBar: TStatusBar
     Left = 0
     Top = 589
@@ -52,6 +76,51 @@ object fmMain: TfmMain
     Caption = 'Test &MySql People'
     TabOrder = 2
     OnClick = btTestMySqlClick
+  end
+  object btTestCsv: TButton
+    Left = 8
+    Top = 39
+    Width = 170
+    Height = 25
+    Caption = 'Test &Csv-Klasse'
+    TabOrder = 3
+    OnClick = btTestCsvClick
+  end
+  object btTestMath: TButton
+    Left = 8
+    Top = 70
+    Width = 170
+    Height = 25
+    Caption = 'Test &Math-Klasse'
+    TabOrder = 4
+    OnClick = btTestMathClick
+  end
+  object btTestArray: TButton
+    Left = 8
+    Top = 101
+    Width = 170
+    Height = 25
+    Caption = 'Test Array-Klasse'
+    TabOrder = 5
+    OnClick = btTestArrayClick
+  end
+  object btTestData: TButton
+    Left = 8
+    Top = 132
+    Width = 170
+    Height = 25
+    Caption = 'Test Data-Klasse'
+    TabOrder = 6
+    OnClick = btTestDataClick
+  end
+  object btTestEcg: TButton
+    Left = 8
+    Top = 216
+    Width = 170
+    Height = 25
+    Caption = 'Test Ecg-Klasse'
+    TabOrder = 7
+    OnClick = btTestEcgClick
   end
   object tStartup: TTimer
     Enabled = False
