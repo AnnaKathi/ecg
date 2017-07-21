@@ -17,16 +17,34 @@ cTools::cTools()
 /**************   Formulardaten laden und speichern   **********************/
 /***************************************************************************/
 //---------------------------------------------------------------------------
-String cTools::GetPath()
+String cTools::GetApplicationPath()
 	{
 	String path = ExtractFilePath(ParamStr(0));
 	if (path.Length()) path = path.SubString(1, path.Length()-1);
-    return path;
+	return path;
+	}
+//---------------------------------------------------------------------------
+String cTools::GetProgramPath()
+	{
+	String p = ExtractFilePath(ParamStr(0));
+	if (!p.Length()) return "";
+
+	char path[MAX_PATH];
+	sprintf(path, "%s", AnsiString(p.SubString(1, p.Length()-1)));
+	char* pt = strrchr(path, '\\');
+	if (!pt) return "";
+	*pt = 0; //Verzeichnis "bin"
+
+	pt = strrchr(path, '\\');
+	if (!pt) return "";
+	*pt = 0; //Verzeichnis "out" entfernt -> z.B. s:\Anna\src\ecg
+
+	return String(path);
 	}
 //---------------------------------------------------------------------------
 String cTools::GetIniFile()
 	{
-	return GetPath() + "\\EcgTool.ini";
+	return GetApplicationPath() + "\\ecg.ini";
 	}
 //---------------------------------------------------------------------------
 void cTools::FormLoad(TForm* fm)
@@ -236,6 +254,7 @@ void cTools::MsgBox(const String& msg, ...)
 //---------------------------------------------------------------------------
 String cTools::fmt(const String& msg, ...)
 	{
+    //TODO ms fragen: Umstellen, so dass int (%d) wieder geht
 	wchar_t buffer[512];
 	int     nsiz;
 	va_list argptr;
@@ -381,7 +400,7 @@ String cTools::GetComputerProzessor()
 //---------------------------------------------------------------------------
 bool cTools::Log(String msg)
 	{
-	String dat = GetPath() + L"\\ecg.log";
+	String dat = GetApplicationPath() + L"\\ecg.log";
 	FILE* fp = fopen(AnsiString(dat).c_str(), "a+");
 	if (fp == NULL) return false;
 

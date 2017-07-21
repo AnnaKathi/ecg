@@ -17,18 +17,23 @@ class TfmMain : public TForm
 __published:	// Von der IDE verwaltete Komponenten
 	TTimer *tStartup;
 	TStatusBar *StatusBar;
+	TMemo *mInfo;
+	TButton *btTestMySql;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall tStartupTimer(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormKeyPress(TObject *Sender, System::WideChar &Key);
+	void __fastcall btTestMySqlClick(TObject *Sender);
 
 private:
-    cMySql&     fmysql;
+	cMySql&     fmysql;
 	cTools      ftools;
-    bool        bNoMySql;
+	bool        bNoMySql;
 	bool 		setupDatabase();
 	void 		setStatus(String status, int panel = 0);
 	void 		setDbInfo();
+
+	void 		ln(String line); //todo: zu Testzwecken, später wieder entfernen
 
 public:
 	__fastcall TfmMain(TComponent* Owner);

@@ -8,9 +8,10 @@
 #pragma package(smart_init)
 #define TABLE "ecgdata"
 //---------------------------------------------------------------------------
-cMySqlEcgData::cMySqlEcgData(cMySqlWork& worker)
+cMySqlEcgData::cMySqlEcgData()
+	: cBase()
+	, fwork(cMySqlWork::getRef())
 	{
-	fwork = &worker;
 	}
 //---------------------------------------------------------------------------
 cMySqlEcgData::~cMySqlEcgData()
@@ -19,11 +20,11 @@ cMySqlEcgData::~cMySqlEcgData()
 //---------------------------------------------------------------------------
 bool cMySqlEcgData::doQuery(String q)
 	{
-	if (!fwork->query(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.query(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		{
-		fres = fwork->getResult();
+		fres = fwork.getResult();
 		return ok();
 		}
 	}
@@ -49,8 +50,8 @@ bool cMySqlEcgData::save(sEcgData data)
 		"'" + data.note + "'," +
 		"'" + s + "')";
 
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		{
 		//Datensatz wieder reinladen, damit aufrufende Komponenten damit
@@ -93,18 +94,18 @@ bool cMySqlEcgData::load(String condition)
 	String q = "SELECT * FROM `" + String(TABLE) + "` WHERE " + condition;
 		
 	if (!doQuery(q))
-		return fail(fwork->error_code, fwork->error_msg);
+		return fail(fwork.error_code, fwork.error_msg);
 
-	if (fres == NULL) return fail(fwork->error_code, fwork->error_msg);
+	if (fres == NULL) return fail(fwork.error_code, fwork.error_msg);
 	frow = mysql_fetch_row(fres);
-	if (frow == NULL) return fail(fwork->error_code, fwork->error_msg);
+	if (frow == NULL) return fail(fwork.error_code, fwork.error_msg);
 	if (!getRow())    return fail(1, "Die Datenzeile konnte nicht eingelesen werden.");
 	return ok();
 	}
 //---------------------------------------------------------------------------
 bool cMySqlEcgData::nextRow()
 	{
-	if (!fwork->isReady())
+	if (!fwork.isReady())
 		return fail(1, "MySql-Verbindung wurde nicht initialisiert");
 
 	frow = mysql_fetch_row(fres);
@@ -117,10 +118,10 @@ bool cMySqlEcgData::nextRow()
 bool cMySqlEcgData::getLast()
 	{
 	String q = "SELECT * FROM `" + String(TABLE) + "` ORDER BY ID DESC LIMIT 1";
-	if (!fwork->query(q))
+	if (!fwork.query(q))
 		return false;
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	frow = mysql_fetch_row(fres);
 	if (frow == NULL) return false;
 	if (!getRow())    return false;
@@ -136,8 +137,8 @@ bool cMySqlEcgData::deleteByIdent(int ident)
 	{
 	//DELETE FROM `ecg`.`ecgdata` WHERE  `Ident`=51;
 	String q = "DELETE FROM `" + String(TABLE) + "` WHERE `ID` = " + String(ident);
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
@@ -150,7 +151,7 @@ int cMySqlEcgData::getSize()
 	{
 	if (!loadTable())
 		{
-		fail(fwork->error_code, fwork->error_msg);
+		fail(fwork.error_code, fwork.error_msg);
 		return -1;
 		}
 

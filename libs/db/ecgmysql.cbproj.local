@@ -1,24 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.181,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Unit2.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.162,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.858,=D:\src\ecg\libs\db\classMySql_Features.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.471,D:\src\ecg\libs\db\mysql.cpp=X:\$user\ms\documents\Embarcadero\Studio\Projekte\File1.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.282,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.879,=D:\src\ecg\libs\db\classMySql_Work.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.155,=D:\src\ecg\out\lib\ecgcore.lib</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.845,=D:\src\ecg\libs\db\classMySql_DescDb.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.872,=D:\src\ecg\libs\db\classMySql_Session.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.785,=D:\src\ecg\out\lib\libmysql.lib</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.852,=D:\src\ecg\libs\db\classMySql_EcgData.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.106,D:\src\ecg\libs\db\mysql_pch.h=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.866,=D:\src\ecg\libs\db\classMySql_People.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.162,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.387,S:\Anna\src\ecg\libs\db\mysql.cbproj=S:\Anna\src\ecg\libs\db\ecgmysql.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.181,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Unit2.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.106,X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2PCH1.h=D:\src\ecg\libs\db\mysql_pch.h</Transaction>
     <Transaction>1899.12.30 00:00:00.000.838,=D:\src\ecg\libs\db\classMySql.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.020,S:\Anna\src\ecg\libs\db\ecgmysqlPCH1.h=S:\Anna\src\ecg\libs\db\ecgmysql_pch.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.858,=D:\src\ecg\libs\db\classMySql_Features.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.797,X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2.cbproj=D:\src\ecg\libs\db\mysql.cbproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.471,X:\$user\ms\documents\Embarcadero\Studio\Projekte\File1.cpp=D:\src\ecg\libs\db\mysql.cpp</Transaction>
     <Transaction>1899.12.30 00:00:00.000.993,=X:\$user\ms\documents\Embarcadero\Studio\Projekte\File1.cpp</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.797,D:\src\ecg\libs\db\mysql.cbproj=X:\$user\ms\documents\Embarcadero\Studio\Projekte\Project2.cbproj</Transaction>
-    <Transaction>2017.07.19 15:39:08.365,S:\Anna\src\ecg\libs\db\ecgmysqlPCH1.h=S:\Anna\src\ecg\libs\db\mysql_pch.h</Transaction>
-    <Transaction>2017.07.19 15:39:08.387,S:\Anna\src\ecg\libs\db\ecgmysql.cbproj=S:\Anna\src\ecg\libs\db\mysql.cbproj</Transaction>
-    <Transaction>2017.07.19 16:22:37.020,S:\Anna\src\ecg\libs\db\ecgmysql_pch.h=S:\Anna\src\ecg\libs\db\ecgmysqlPCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.866,=D:\src\ecg\libs\db\classMySql_People.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.845,=D:\src\ecg\libs\db\classMySql_DescDb.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.879,=D:\src\ecg\libs\db\classMySql_Work.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.872,=D:\src\ecg\libs\db\classMySql_Session.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.155,=D:\src\ecg\out\lib\ecgcore.lib</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.852,=D:\src\ecg\libs\db\classMySql_EcgData.cpp</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.365,S:\Anna\src\ecg\libs\db\mysql_pch.h=S:\Anna\src\ecg\libs\db\ecgmysqlPCH1.h</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.785,=D:\src\ecg\out\lib\libmysql.lib</Transaction>
+    <Transaction>2017.07.21 09:31:38.512,=S:\Anna\src\ecg\libs\db\mysql_scripts\script_create_all_databases.sql</Transaction>
+    <Transaction>2017.07.21 09:31:38.517,=S:\Anna\src\ecg\libs\db\mysql_scripts\script_insert_dummy_data_basic.sql</Transaction>
+    <Transaction>2017.07.21 09:31:38.523,=S:\Anna\src\ecg\libs\db\mysql_scripts\script_insert_dummy_data_sessions.sql</Transaction>
+    <Transaction>2017.07.21 09:37:01.121,S:\Anna\src\ecg\libs\db\mysql_scripts\script_create_all_databases.sql=</Transaction>
+    <Transaction>2017.07.21 09:37:01.123,S:\Anna\src\ecg\libs\db\mysql_scripts\script_insert_dummy_data_basic.sql=</Transaction>
+    <Transaction>2017.07.21 09:37:01.124,S:\Anna\src\ecg\libs\db\mysql_scripts\script_insert_dummy_data_sessions.sql=</Transaction>
+    <Transaction>2017.07.21 09:37:08.463,=S:\Anna\src\ecg\libs\db\mysql_scripts\script_create_all_databases.sql</Transaction>
+    <Transaction>2017.07.21 09:37:08.469,=S:\Anna\src\ecg\libs\db\mysql_scripts\script_insert_dummy_data_basic.sql</Transaction>
+    <Transaction>2017.07.21 09:37:08.475,=S:\Anna\src\ecg\libs\db\mysql_scripts\script_insert_dummy_data_sessions.sql</Transaction>
+    <Transaction>2017.07.21 09:55:28.820,S:\Anna\src\ecg\out\lib\ecgcore.lib=</Transaction>
+    <Transaction>2017.07.21 09:55:51.712,=S:\Anna\src\ecg\out\lib\ecgcore.lib</Transaction>
+    <Transaction>2017.07.21 09:58:17.156,S:\Anna\src\ecg\out\lib\libmysql.lib=</Transaction>
+    <Transaction>2017.07.21 09:58:19.672,S:\Anna\src\ecg\out\lib\ecgcore.lib=</Transaction>
   </Transactions>
 </BorlandProject>

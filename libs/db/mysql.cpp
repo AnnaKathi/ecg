@@ -23,6 +23,9 @@
 #pragma hdrstop
 #pragma argsused
 
+#pragma link "ecgcore.lib"
+#pragma link "libmysql.lib"
+
 int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void* lpReserved)
 {
 	return 1;

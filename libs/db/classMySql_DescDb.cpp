@@ -18,9 +18,10 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------
-cMySqlDescDb::cMySqlDescDb(cMySqlWork& worker, String tabelle)
+cMySqlDescDb::cMySqlDescDb(String tabelle)
+	: cBase()
+	, fwork(cMySqlWork::getRef())
 	{
-	fwork = &worker;
 	fTabelle = tabelle;
 	}
 //---------------------------------------------------------------------------
@@ -35,10 +36,10 @@ cMySqlDescDb::~cMySqlDescDb()
 bool cMySqlDescDb::get(int ident)
 	{
 	String q = "SELECT * FROM `" + String(fTabelle) + "` WHERE `ID` = " + String(ident);
-	if (!fwork->query(q))
+	if (!fwork.query(q))
 		return false;
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	frow = mysql_fetch_row(fres);
 	if (frow == NULL) return false;
 
@@ -50,16 +51,16 @@ bool cMySqlDescDb::get(int ident)
 //---------------------------------------------------------------------------
 bool cMySqlDescDb::loadTable(String order) //order ist vorbesetzt mit ""
 	{
-	if (!fwork->loadTable(fTabelle, order))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.loadTable(fTabelle, order))
+		return fail(fwork.error_code, fwork.error_msg);
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	return ok();
 	}
 //---------------------------------------------------------------------------
 bool cMySqlDescDb::nextRow()
 	{
-	if (!fwork->isReady())
+	if (!fwork.isReady())
 		return fail(1, "MySql-Verbindung wurde nicht initialisiert");
 
 	frow = mysql_fetch_row(fres);
@@ -83,8 +84,8 @@ bool cMySqlDescDb::insert(sDescData data)
 	q+= "'" + String(data.name) + "'";
 	q+= ")";
 
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
@@ -95,8 +96,8 @@ bool cMySqlDescDb::update(sDescData data)
 	q+= "Name='" + String(data.name) + "' ";
 	q+= "WHERE ID=" + String(data.ident);
 
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
@@ -111,11 +112,11 @@ String cMySqlDescDb::getNameOf(int ident) //eine Bezeichnugn einer Erkrankung
 
 	String name = "";
 	String q = "SELECT * FROM `" + String(fTabelle) + "` WHERE `ID` = " + String(ident);
-	if (!fwork->query(q))
+	if (!fwork.query(q))
 		name = "- nicht gefunden (" + String(ident) + ") -";
 	else
 		{
-		fres = fwork->getResult();
+		fres = fwork.getResult();
 		frow = mysql_fetch_row(fres);
 		if (frow == NULL) return "";
 
@@ -145,7 +146,7 @@ int cMySqlDescDb::getSize()
 	{
 	if (!loadTable())
 		{
-		fail(fwork->error_code, fwork->error_msg);
+		fail(fwork.error_code, fwork.error_msg);
 		return -1;
 		}
 
@@ -161,7 +162,7 @@ bool cMySqlDescDb::listInCombo(TComboBox* cb, int mode) //mode ist mit 0 vorbese
 	//Alle Erkrankungen aus der DB in der ComboBox anzeigen,
 	//der mode bestimmt was angezeigt wird
 	if (!loadTable("Name ASC"))
-		return fail(fwork->error_code, fwork->error_msg);
+		return fail(fwork.error_code, fwork.error_msg);
 
 	cb->Items->Clear();
 	String dis;
@@ -186,8 +187,8 @@ bool cMySqlDescDb::deleteByIdent(int ident)
 	{
 	//DELETE FROM `ecg`.`ecgdata` WHERE  `Ident`=51;
 	String q = "DELETE FROM `" + String(fTabelle) + "` WHERE `ID` = " + String(ident);
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}

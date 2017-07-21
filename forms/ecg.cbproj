@@ -149,16 +149,6 @@
             <BuildOrder>1</BuildOrder>
             <PCH>true</PCH>
         </PCHCompile>
-        <LibFiles Include="..\out\lib\ecgcore.lib" Condition="'$(Platform)'=='Win32'">
-            <VirtualFolder>{4F4162A4-4E00-490A-9507-20DAFE4694A7}</VirtualFolder>
-            <BuildOrder>3</BuildOrder>
-            <IgnorePath>true</IgnorePath>
-        </LibFiles>
-        <LibFiles Include="..\out\lib\ecgmysql.lib" Condition="'$(Platform)'=='Win32'">
-            <VirtualFolder>{4F4162A4-4E00-490A-9507-20DAFE4694A7}</VirtualFolder>
-            <BuildOrder>6</BuildOrder>
-            <IgnorePath>true</IgnorePath>
-        </LibFiles>
         <FormResources Include="ecg_main.dfm"/>
         <FormResources Include="addForms\addPeople.dfm"/>
         <FormResources Include="baseForms\basePeople.dfm"/>
@@ -190,7 +180,6 @@
                     <Source Name="MainSource">ecg.cpp</Source>
                 </Source>
                 <VFOLDERS>
-                    <VFOLDER ID="{4F4162A4-4E00-490A-9507-20DAFE4694A7}" name="lib"/>
                     <VFOLDER ID="{4FB926BD-CF5D-486E-AA3B-409DEC9396C5}" name="baseForms"/>
                     <VFOLDER ID="{2D4DF9F4-E40D-40BD-9228-ED35DB8526BE}" name="addForms"/>
                 </VFOLDERS>
@@ -229,18 +218,6 @@
                 </DeployFile>
                 <DeployFile Condition="'$(DynamicRTL)'=='true'" LocalName="$(BDS)\Redist\osx32\libcgstl.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\out\lib\ecgmysql.lib" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\out\lib\ecgcore.lib" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

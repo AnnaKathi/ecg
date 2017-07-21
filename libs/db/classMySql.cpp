@@ -50,20 +50,20 @@ cMySql::cMySql()
 void cMySql::init()
 	{
 	//todo -oms: bitte nach refac aus klasse entfernern
-	fecg      = new cMySqlEcgData(fwork);
+	fecg      = new cMySqlEcgData();
 	fpeople   = new cMySqlPeople();
-	fsessions = new cMySqlSession(fwork);
-	ffeatures = new cMySqlFeature(fwork);
+	fsessions = new cMySqlSession();
+	ffeatures = new cMySqlFeature();
 
-	fdiseases    = new cMySqlDescDb(fwork, "diseases");
-	fplaces      = new cMySqlDescDb(fwork, "places");
-	fresearchers = new cMySqlDescDb(fwork, "researchers");
-	fpostures    = new cMySqlDescDb(fwork, "postures");
-	fstates      = new cMySqlDescDb(fwork, "states");
-	fpositions   = new cMySqlDescDb(fwork, "positions");
-	falgpreproc  = new cMySqlDescDb(fwork, "algpreprocessing");
-	falgrpeaks   = new cMySqlDescDb(fwork, "algrpeaks");
-	falgfeatures = new cMySqlDescDb(fwork, "algfeatures");
+	fdiseases    = new cMySqlDescDb("diseases");
+	fplaces      = new cMySqlDescDb("places");
+	fresearchers = new cMySqlDescDb("researchers");
+	fpostures    = new cMySqlDescDb("postures");
+	fstates      = new cMySqlDescDb("states");
+	fpositions   = new cMySqlDescDb("positions");
+	falgpreproc  = new cMySqlDescDb("algpreprocessing");
+	falgrpeaks   = new cMySqlDescDb("algrpeaks");
+	falgfeatures = new cMySqlDescDb("algfeatures");
 	}
 //---------------------------------------------------------------------------
 cMySql::~cMySql()

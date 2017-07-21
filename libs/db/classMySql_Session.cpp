@@ -10,9 +10,10 @@
 #define TABLE "sessions"
 #define SESRE "sessionresearchers"
 //---------------------------------------------------------------------------
-cMySqlSession::cMySqlSession(cMySqlWork& worker)
+cMySqlSession::cMySqlSession()
+	: cBase()
+	, fwork(cMySqlWork::getRef())
 	{
-	fwork = &worker;
 	}
 //---------------------------------------------------------------------------
 cMySqlSession::~cMySqlSession()
@@ -21,11 +22,11 @@ cMySqlSession::~cMySqlSession()
 //---------------------------------------------------------------------------
 bool cMySqlSession::doQuery(String q)
 	{
-	if (!fwork->query(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.query(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		{
-		fres = fwork->getResult();
+		fres = fwork.getResult();
 		return ok();
 		}
 	}
@@ -37,10 +38,10 @@ bool cMySqlSession::doQuery(String q)
 bool cMySqlSession::get(int session)
 	{
 	String q = "SELECT * FROM `" + String(TABLE) + "` WHERE `ID` = " + String(session);
-	if (!fwork->query(q))
+	if (!fwork.query(q))
 		return false;
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	frow = mysql_fetch_row(fres);
 	if (frow == NULL) return false;
 	if (!ParseRow()) return false;
@@ -50,16 +51,16 @@ bool cMySqlSession::get(int session)
 //---------------------------------------------------------------------------
 bool cMySqlSession::loadTable(String order) //order ist vorbesetzt mit ""
 	{
-	if (!fwork->loadTable(TABLE, order))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.loadTable(TABLE, order))
+		return fail(fwork.error_code, fwork.error_msg);
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	return ok();
 	}
 //---------------------------------------------------------------------------
 bool cMySqlSession::nextRow()
 	{
-	if (!fwork->isReady())
+	if (!fwork.isReady())
 		return fail(1, "MySql-Verbindung wurde nicht initialisiert");
 
 	frow = mysql_fetch_row(fres);
@@ -72,10 +73,10 @@ bool cMySqlSession::nextRow()
 bool cMySqlSession::getLast()
 	{
 	String q = "SELECT * FROM " + String(TABLE) + " ORDER BY ID DESC LIMIT 1";
-	if (!fwork->query(q))
+	if (!fwork.query(q))
 		return false;
 
-	fres = fwork->getResult();
+	fres = fwork.getResult();
 	frow = mysql_fetch_row(fres);
 	if (frow == NULL) return false;
 	if (!ParseRow()) return false;
@@ -99,8 +100,8 @@ bool cMySqlSession::insert(sSession data)
 	q+= "'" + data.note + "'";
 	q+= ")";
 
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		{
 		//Datensatz wieder reinladen, damit aufrufende Komponenten damit
@@ -120,8 +121,8 @@ bool cMySqlSession::update(sSession data)
 	q+= "Note='"     + data.note + "' ";
 	q+= "WHERE ID="  + String(data.ident);
 
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
@@ -137,8 +138,8 @@ bool cMySqlSession::insertResearcher(int session, int researcher)
 	q += "'" + String(researcher) + "'";
 	q += ")";
 
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		return ok();
 	}
@@ -151,7 +152,7 @@ int cMySqlSession::getSize()
 	{
 	if (!loadTable())
 		{
-		fail(fwork->error_code, fwork->error_msg);
+		fail(fwork.error_code, fwork.error_msg);
 		return -1;
 		}
 
@@ -178,7 +179,7 @@ bool cMySqlSession::listInCombo(TComboBox* cb, int mode) //mode ist mit 0 vorbes
 	//Alle Sessions aus der DB in der ComboBox anzeigen, der mode bestimmt
 	//was angezeigt wird
 	if (!loadTable(""))
-		return fail(fwork->error_code, fwork->error_msg);
+		return fail(fwork.error_code, fwork.error_msg);
 
 	cb->Items->Clear();
 	String str;
@@ -201,14 +202,14 @@ bool cMySqlSession::listInCombo(TComboBox* cb, int mode) //mode ist mit 0 vorbes
 bool cMySqlSession::deleteByIdent(int ident)
 	{
 	String q = "DELETE FROM `" + String(TABLE) + "` WHERE `ID` = " + String(ident);
-	if (!fwork->send(q))
-		return fail(fwork->error_code, fwork->error_msg);
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
 	else
 		{
 		//Session_Researchers löschen
 		q = "DELETE FROM `" + String(SESRE) + "` WHERE `Sessions_ID` = " + String(ident);
-		if (!fwork->send(q))
-			return fail(fwork->error_code, fwork->error_msg);
+		if (!fwork.send(q))
+			return fail(fwork.error_code, fwork.error_msg);
 		}
 		
 	return ok();

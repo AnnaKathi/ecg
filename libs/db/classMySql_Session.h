@@ -21,7 +21,7 @@ struct sSession
 class PACKAGE cMySqlSession : public cBase
 	{
 public:
-	cMySqlSession(cMySqlWork& worker);
+	cMySqlSession();
 	~cMySqlSession();
 
 	//-- Daten laden
@@ -53,7 +53,7 @@ private:
 	sSession 		fdata;
 	sSession 		get_data();
 
-	cMySqlWork*		fwork;
+	cMySqlWork&		fwork;
 
 	MYSQL_RES*  	fres; //SQL-Daten
 	MYSQL_ROW		frow;

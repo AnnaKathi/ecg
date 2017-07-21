@@ -27,7 +27,7 @@ struct sEcgData
 class PACKAGE cMySqlEcgData : public cBase
 	{
 public:
-	cMySqlEcgData(cMySqlWork& worker);
+	cMySqlEcgData();
 	~cMySqlEcgData();
 
 	bool 	save(sEcgData data);
@@ -63,7 +63,7 @@ private:
 	sEcgData		fdata;
 	sEcgData		get_data();
 
-	cMySqlWork*		fwork;
+	cMySqlWork&		fwork;
 
 	MYSQL_RES*  	fres; //SQL-Daten
 	MYSQL_ROW		frow;

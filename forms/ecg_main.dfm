@@ -10,7 +10,9 @@ object fmMain: TfmMain
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
+  Position = poDesktopCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
@@ -31,15 +33,31 @@ object fmMain: TfmMain
       item
         Width = 250
       end>
-    ExplicitLeft = 432
-    ExplicitTop = 480
-    ExplicitWidth = 0
+  end
+  object mInfo: TMemo
+    Left = 184
+    Top = 0
+    Width = 545
+    Height = 589
+    Align = alRight
+    ReadOnly = True
+    ScrollBars = ssBoth
+    TabOrder = 1
+  end
+  object btTestMySql: TButton
+    Left = 8
+    Top = 8
+    Width = 170
+    Height = 25
+    Caption = 'Test &MySql People'
+    TabOrder = 2
+    OnClick = btTestMySqlClick
   end
   object tStartup: TTimer
     Enabled = False
     Interval = 100
     OnTimer = tStartupTimer
-    Left = 16
-    Top = 16
+    Left = 648
+    Top = 8
   end
 end

@@ -17,7 +17,7 @@ struct sDescData
 class PACKAGE cMySqlDescDb : public cBase
 	{
 public:
-	cMySqlDescDb(cMySqlWork& worker, String tabelle);
+	cMySqlDescDb(String tabelle);
 	~cMySqlDescDb();
 
 	//-- Daten laden
@@ -53,7 +53,7 @@ private:
 	sDescData		fdata;
 	sDescData   	get_data();
 
-	cMySqlWork*		fwork;
+	cMySqlWork&		fwork;
 
 	MYSQL_RES*  	fres; //SQL-Daten
 	MYSQL_ROW		frow;

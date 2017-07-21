@@ -7,7 +7,7 @@
             <Dependencies>..\libs\db\ecgmysql.cbproj;..\libs\core\ecgcore.cbproj</Dependencies>
         </Projects>
         <Projects Include="..\libs\db\ecgmysql.cbproj">
-            <Dependencies/>
+            <Dependencies>..\libs\core\ecgcore.cbproj</Dependencies>
         </Projects>
         <Projects Include="..\libs\core\ecgcore.cbproj">
             <Dependencies/>
@@ -29,13 +29,13 @@
     <Target Name="ecg:Make" DependsOnTargets="ecgmysql:Make;ecgcore:Make">
         <MSBuild Projects="..\forms\ecg.cbproj" Targets="Make"/>
     </Target>
-    <Target Name="ecgmysql">
+    <Target Name="ecgmysql" DependsOnTargets="ecgcore">
         <MSBuild Projects="..\libs\db\ecgmysql.cbproj"/>
     </Target>
-    <Target Name="ecgmysql:Clean">
+    <Target Name="ecgmysql:Clean" DependsOnTargets="ecgcore:Clean">
         <MSBuild Projects="..\libs\db\ecgmysql.cbproj" Targets="Clean"/>
     </Target>
-    <Target Name="ecgmysql:Make">
+    <Target Name="ecgmysql:Make" DependsOnTargets="ecgcore:Make">
         <MSBuild Projects="..\libs\db\ecgmysql.cbproj" Targets="Make"/>
     </Target>
     <Target Name="ecgcore">

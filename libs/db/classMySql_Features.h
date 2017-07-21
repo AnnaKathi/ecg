@@ -22,7 +22,7 @@ struct sFeature
 class PACKAGE cMySqlFeature : public cBase
 	{
 public:
-	cMySqlFeature(cMySqlWork& worker);
+	cMySqlFeature();
 	~cMySqlFeature();
 
 	//-- Daten laden
@@ -55,7 +55,7 @@ private:
 	sFeature 		fdata;
 	sFeature 		get_data();
 
-	cMySqlWork*		fwork;
+	cMySqlWork&		fwork;
 
 	MYSQL_RES*  	fres; //SQL-Daten
 	MYSQL_ROW		frow;

@@ -174,12 +174,13 @@ void TfmMain::setDbInfo()
 	if (bNoMySql)
 		setStatus("### MySql-Datenbank wird nicht verwendet ###", 1);
 	else
+        //TODO %s wieder in %d umwandeln
 		setStatus(
-		ftools.fmt("%d Personen, %d Sessions, %d EKG-Datensätze, %d Features",
-		fmysql.people.getSize(),
-		fmysql.sessions.getSize(),
-		fmysql.ecg.getSize(),
-		fmysql.features.getSize()), 1);
+		ftools.fmt(L"%s Personen, %s Sessions, %s EKG-Datensätze, %s Features",
+		String(fmysql.people.getSize()),
+		String(fmysql.sessions.getSize()),
+		String(fmysql.ecg.getSize()),
+		String(fmysql.features.getSize())), 1);
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::FormKeyPress(TObject *Sender, System::WideChar &Key)
@@ -189,6 +190,61 @@ void __fastcall TfmMain::FormKeyPress(TObject *Sender, System::WideChar &Key)
 		Key = 0;
 		Close();
         }
+	}
+//---------------------------------------------------------------------------
+//---  Testbuttons  ---------------------------------------------------------
+//---------------------------------------------------------------------------
+void TfmMain::ln(String line)
+	{
+	mInfo->Lines->Add(line);
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btTestMySqlClick(TObject *Sender)
+	{
+	cMySqlPeople& pp = fmysql.people;
+
+	ln(ftools.fmt("Datenbank-Test 'People'"));
+
+	ln(ftools.fmt("\tAnz. Personen: %s", String(pp.getSize())));
+
+	sPeople p;
+	sprintf(p.firstname, "%s", "Otto");
+	sprintf(p.lastname,  "%s", "Mustermann");
+	p.sex       = 0;
+	p.age       = 99;
+	p.height    = 180;
+	p.weight    = 80;
+
+	if (pp.insert(p))
+		ln(ftools.fmt("\tPerson hinzugefügt: (%s) %s",
+			String(pp.row.ident), String(pp.row.lastname)));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, Person konnte nicht gespeichert werden"));
+		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
+		}
+
+	int id = pp.row.ident;
+	if (pp.get(id))
+		ln(ftools.fmt("\tPerson %s geladen: %s %s",
+			String(pp.row.ident),
+			String(pp.row.firstname),
+			String(pp.row.lastname)));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, Person konnte nicht geladen werden"));
+		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
+		}
+
+	if (pp.deleteByIdent(id))
+		ln(ftools.fmt("\tPerson %s gelöscht", String(id)));
+	else
+		{
+		ln(ftools.fmt("\t## Fehler, Person konnte nicht gelöscht werden"));
+		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
+		}
+
+	ln("Test-Ende");
 	}
 //---------------------------------------------------------------------------
 
