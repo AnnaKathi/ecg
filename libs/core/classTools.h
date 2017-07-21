@@ -76,7 +76,8 @@ public:
 	//--- String-Funktionen ---------------------------------------------------
 	//-------------------------------------------------------------------------
 
-		String		fmt(const String& msg, ...);
+		String		fmt(const wchar_t* msg, ...);
+		String 		fmt(const char* msg, ...);
 		int			replace(String& str, String old, String neu);
 		iarray_t	TextToArray(String text, String delim);
 		String		ArrayToText(iarray_t array, String delim);

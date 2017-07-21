@@ -161,7 +161,7 @@ bool cMySql::dbExists()
 //---------------------------------------------------------------------------
 bool cMySql::tabExists(String tabelle)
 	{
-	String q = ftools.fmt(L"SHOW TABLES like '%s'", tabelle.c_str());
+	String q = ftools.fmt("SHOW TABLES like '%s'", tabelle.c_str());
 
 	if (!fwork.query(q))
 		return fail(fwork.error_code, fwork.error_msg);

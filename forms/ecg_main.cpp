@@ -108,7 +108,7 @@ bool TfmMain::setupDatabase()
 		Application->MessageBox(
 			ftools.fmt(
 				"Die MySql-Datenbankverbindung konnte nicht initialisiert werden. "
-                "Die Funktion meldet: %s", fmysql.error_msg.c_str()
+				"Die Funktion meldet: %s", fmysql.error_msg.c_str()
 				).c_str(),
 			L"Fehler beim Öffnen der Datenbank",
 			MB_OK);
@@ -171,16 +171,17 @@ void TfmMain::setStatus(String status, int panel) //panel ist vorbesetzt mit 0
 //---------------------------------------------------------------------------
 void TfmMain::setDbInfo()
 	{
+    int test = fmysql.people.getSize();
 	if (bNoMySql)
 		setStatus("### MySql-Datenbank wird nicht verwendet ###", 1);
 	else
         //TODO %s wieder in %d umwandeln
 		setStatus(
-		ftools.fmt(L"%s Personen, %s Sessions, %s EKG-Datensätze, %s Features",
-		String(fmysql.people.getSize()),
-		String(fmysql.sessions.getSize()),
-		String(fmysql.ecg.getSize()),
-		String(fmysql.features.getSize())), 1);
+		ftools.fmt("%d Personen, %d Sessions, %d EKG-Datensätze, %d Features",
+		fmysql.people.getSize(),
+		fmysql.sessions.getSize(),
+		fmysql.ecg.getSize(),
+		fmysql.features.getSize()), 1);
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::FormKeyPress(TObject *Sender, System::WideChar &Key)
@@ -216,8 +217,8 @@ void __fastcall TfmMain::btTestMySqlClick(TObject *Sender)
 	p.weight    = 80;
 
 	if (pp.insert(p))
-		ln(ftools.fmt("\tPerson hinzugefügt: (%s) %s",
-			String(pp.row.ident), String(pp.row.lastname)));
+		ln(ftools.fmt("\tPerson hinzugefügt: (%d) %s",
+			pp.row.ident, String(pp.row.lastname)));
 	else
 		{
 		ln(ftools.fmt("\t## Fehler, Person konnte nicht gespeichert werden"));
@@ -226,8 +227,8 @@ void __fastcall TfmMain::btTestMySqlClick(TObject *Sender)
 
 	int id = pp.row.ident;
 	if (pp.get(id))
-		ln(ftools.fmt("\tPerson %s geladen: %s %s",
-			String(pp.row.ident),
+		ln(ftools.fmt("\tPerson %d geladen: %s %s",
+			pp.row.ident,
 			String(pp.row.firstname),
 			String(pp.row.lastname)));
 	else
@@ -237,7 +238,7 @@ void __fastcall TfmMain::btTestMySqlClick(TObject *Sender)
 		}
 
 	if (pp.deleteByIdent(id))
-		ln(ftools.fmt("\tPerson %s gelöscht", String(id)));
+		ln(ftools.fmt("\tPerson %d gelöscht", id));
 	else
 		{
 		ln(ftools.fmt("\t## Fehler, Person konnte nicht gelöscht werden"));

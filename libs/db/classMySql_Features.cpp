@@ -65,7 +65,7 @@ bool cMySqlFeature::select(int ecg, int preId, int rpeaksId, int featId)
 
 	String q =
 		ftools.fmt(
-		L"SELECT * FROM %s WHERE `EcgData_ID` = %d AND `AlgPreprocessing_ID` = %d AND `AlgRpeaks_ID` = %d AND `AlgFeatures_ID` = %d",
+		"SELECT * FROM %s WHERE `EcgData_ID` = %d AND `AlgPreprocessing_ID` = %d AND `AlgRpeaks_ID` = %d AND `AlgFeatures_ID` = %d",
 		String(TABLE), ecg, preId, rpeaksId, featId);
 
 	if (!fwork.query(q))

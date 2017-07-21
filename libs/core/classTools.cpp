@@ -252,7 +252,7 @@ void cTools::MsgBox(const String& msg, ...)
 /**************   String-Funktionen   **************************************/
 /***************************************************************************/
 //---------------------------------------------------------------------------
-String cTools::fmt(const String& msg, ...)
+String cTools::fmt(const wchar_t* msg, ...)
 	{
     //TODO ms fragen: Umstellen, so dass int (%d) wieder geht
 	wchar_t buffer[512];
@@ -260,10 +260,29 @@ String cTools::fmt(const String& msg, ...)
 	va_list argptr;
 
 	va_start(argptr, msg);
-	nsiz = vsnwprintf(0, 0, msg.c_str(), argptr);
+	nsiz = vsnwprintf(0, 0, msg, argptr);
 	if (nsiz >= sizeof(buffer)-2) nsiz = sizeof(buffer)-2;
 
-	vsnwprintf(buffer, nsiz, msg.c_str(), argptr);
+	vsnwprintf(buffer, nsiz, msg, argptr);
+	buffer[nsiz] = 0;
+	va_end(argptr);
+
+	return String(buffer);
+	}
+//---------------------------------------------------------------------------
+String cTools::fmt(const char* msg, ...)
+	{
+	//TODO ms fragen: Umstellen, so dass int (%d) wieder geht
+	wchar_t buffer[512];
+	int     nsiz;
+	va_list argptr;
+
+	va_start(argptr, msg);
+	String wstr = msg;
+	nsiz = vsnwprintf(0, 0, wstr.c_str(), argptr);
+	if (nsiz >= sizeof(buffer)-2) nsiz = sizeof(buffer)-2;
+
+	vsnwprintf(buffer, nsiz, wstr.c_str(), argptr);
 	buffer[nsiz] = 0;
 	va_end(argptr);
 

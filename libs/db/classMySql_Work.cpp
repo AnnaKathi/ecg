@@ -136,10 +136,10 @@ bool cMySqlWork::query(String q)
 		return fail(2, "Datenbank wurde nicht initialisiert");
 
 	if (mysql_real_query(fcon, AnsiString(q).c_str(), q.Length()) != 0)
-		return fail(2, ftools.fmt(L"Fehler in QUERY: %d", mysql_error(fcon)));
+		return fail(2, ftools.fmt("Fehler in QUERY: %d", mysql_error(fcon)));
 
 	if ((fres = mysql_store_result(fcon)) == NULL)
-		return fail(2, ftools.fmt(L"Fehler in STORE_RESULT: %d", mysql_error(fcon)));
+		return fail(2, ftools.fmt("Fehler in STORE_RESULT: %d", mysql_error(fcon)));
 
 	if (mysql_num_rows(fres) == 0)
 		return ok(); //not: fail(2, msg.c_str());
@@ -153,7 +153,7 @@ bool cMySqlWork::send(String q)
 		return fail(3, "Datenbank wurde nicht initialisiert");
 
 	if (mysql_real_query(fcon, AnsiString(q).c_str(), q.Length()) != 0)
-		return fail(3, ftools.fmt(L"Fehler in QUERY: %s", mysql_error(fcon)));
+		return fail(3, ftools.fmt("Fehler in QUERY: %s", mysql_error(fcon)));
 
 	return ok();
 	}
@@ -165,7 +165,7 @@ bool cMySqlWork::script(String script_name)
 	sprintf(script, "%s\\libs\\db\\mysql_scripts\\script_%s.sql", AnsiString(ftools.GetProgramPath()).c_str(), AnsiString(script_name).c_str());
 	FILE* fp = fopen(script, "r");
 	if (fp == NULL)
-		return fail(4, ftools.fmt(L"Skript-Datei konnte nicht gefunden werden (%s)", script));
+		return fail(4, ftools.fmt("Skript-Datei konnte nicht gefunden werden (%s)", script));
 
 	String q = "";
 	String line;
