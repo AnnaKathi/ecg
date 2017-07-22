@@ -121,10 +121,6 @@ private:
 	cEcg        fecg34;
 	cEcg        fecg56;
 
-	void 		JobStart(int max);
-	void 		JobTick(int pos = 0);
-	void 		JobEnd();
-
 	bool        FormComplete(); //true wenn alles ausgefüllt ist
 
 	bool        ShowFile(String ecgFile);

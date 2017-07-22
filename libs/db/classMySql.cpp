@@ -60,7 +60,7 @@ void cMySql::init()
 	fresearchers = new cMySqlDescDb("researchers");
 	fpostures    = new cMySqlDescDb("postures");
 	fstates      = new cMySqlDescDb("states");
-	fpositions   = new cMySqlDescDb("positions");
+	fchannels    = new cMySqlDescDb("channels");
 	falgpreproc  = new cMySqlDescDb("algpreprocessing");
 	falgrpeaks   = new cMySqlDescDb("algrpeaks");
 	falgfeatures = new cMySqlDescDb("algfeatures");
@@ -80,7 +80,7 @@ void cMySql::shutdown()
 
 	if (fdiseases)    delete fdiseases; 		if (fplaces)    delete fplaces;
 	if (fresearchers) delete fresearchers;		if (fpostures)  delete fpostures;
-	if (fpositions)   delete fpositions;		if (fstates)    delete fstates;
+	if (fchannels)    delete fchannels; 		if (fstates)    delete fstates;
 	if (falgfeatures) delete falgfeatures;		if (falgrpeaks) delete falgrpeaks;
 	if (falgpreproc)  delete falgpreproc;
 	}
@@ -253,9 +253,9 @@ cMySqlDescDb& cMySql::get_states()
 	return *fstates;
 	}
 //---------------------------------------------------------------------------
-cMySqlDescDb& cMySql::get_positions()
+cMySqlDescDb& cMySql::get_channels()
 	{
-	return *fpositions;
+	return *fchannels;
 	}
 //---------------------------------------------------------------------------
 cMySqlDescDb& cMySql::get_alg_preproc()

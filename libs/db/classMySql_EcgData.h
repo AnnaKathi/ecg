@@ -58,8 +58,7 @@ __property int num_rows = { read=get_num_rows };
 private:
 	cTools			ftools;
 
-	bool 			LongstrToData(String str, iarray_t& array, double* werte);
-	//obsolete ?? bool			LongstrToData(int nr, String str, sEcgData& data);
+	bool 			LongstrToData(String str, double* werte);
 	String 			DataToLongtext(double* werte);
 	String 			ArrayToLongtext(iarray_t array);
 

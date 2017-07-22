@@ -4,8 +4,9 @@
 
 #include <libs/db/classMySql.h>
 
-#include "ecg_viewer.h"
 #include "ecg_saveFile.h"
+#include "ecg_viewer.h"
+#include "ecg_dbviewerSignale.h"
 
 #include "ecg_main.h"
 //---------------------------------------------------------------------------
@@ -438,14 +439,19 @@ void __fastcall TfmMain::btTestEcgClick(TObject *Sender)
 	ln("Test-Ende");
 	}
 //---------------------------------------------------------------------------
-void __fastcall TfmMain::btEcgViewerClick(TObject *Sender)
-	{
-    DlgEcgViewer(this);
-	}
-//---------------------------------------------------------------------------
 void __fastcall TfmMain::btAddLeadClick(TObject *Sender)
 	{
 	DlgSaveEcgFile(this);
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btEcgViewerClick(TObject *Sender)
+	{
+	DlgEcgViewer(this);
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btViewSignalClick(TObject *Sender)
+	{
+	DlgDbViewerSignale(this);
 	}
 //---------------------------------------------------------------------------
 

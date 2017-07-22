@@ -40,6 +40,7 @@ public:
 
 	//-- Daten anzeigen
 	bool	listInCombo(TComboBox* cb, int mode = 0);
+	String 	getStampOf(int id);
 
 	//-- Daten löschen
 	bool 	deleteByIdent(int ident);

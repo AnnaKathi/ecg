@@ -124,7 +124,7 @@ object fmMain: TfmMain
   end
   object btEcgViewer: TButton
     Left = 8
-    Top = 224
+    Top = 238
     Width = 170
     Height = 25
     Caption = 'Ecg Viewer'
@@ -133,12 +133,21 @@ object fmMain: TfmMain
   end
   object btAddLead: TButton
     Left = 8
-    Top = 255
+    Top = 207
     Width = 170
     Height = 25
     Caption = 'Add File to DB'
     TabOrder = 9
     OnClick = btAddLeadClick
+  end
+  object btViewSignal: TButton
+    Left = 8
+    Top = 263
+    Width = 170
+    Height = 25
+    Caption = 'Signal Viewer'
+    TabOrder = 10
+    OnClick = btViewSignalClick
   end
   object tStartup: TTimer
     Enabled = False

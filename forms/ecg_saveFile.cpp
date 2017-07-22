@@ -63,23 +63,6 @@ void __fastcall TfmAddFile::FormClose(TObject *Sender, TCloseAction &Action)
 /******************   Funktionen   *****************************************/
 /***************************************************************************/
 //---------------------------------------------------------------------------
-void TfmAddFile::JobStart(int max)
-	{
-	pbJob->Max = max;
-	pbJob->Position = 0;
-	pbJob->Visible = true;
-	}
-//---------------------------------------------------------------------------
-void TfmAddFile::JobTick(int pos) //pos ist mit 0 vorbesetzt
-	{
-	pbJob->Position += pos;
-	}
-//---------------------------------------------------------------------------
-void TfmAddFile::JobEnd()
-	{
-	pbJob->Visible = false;
-	}
-//---------------------------------------------------------------------------
 bool TfmAddFile::FormComplete()
 	{
 	if (edEkg->Text    == "") return false;
@@ -135,18 +118,19 @@ bool TfmAddFile::ShowFile(String ecgFile)
 	fecg34.number = 34; fecg34.file = ecgFile; fecg34.image = img34;
 	fecg56.number = 56; fecg56.file = ecgFile; fecg56.image = img56;
 
-	JobStart(9); if (!DisplayEcg(fecg2,  eChannel2))  return false;
-	JobTick();   if (!DisplayEcg(fecg3,  eChannel3))  return false;
-	JobTick();   if (!DisplayEcg(fecg4,  eChannel4))  return false;
-	JobTick();   if (!DisplayEcg(fecg5,  eChannel5))  return false;
-	JobTick();   if (!DisplayEcg(fecg6,  eChannel6))  return false;
-	JobTick();   if (!DisplayEcg(fecg7,  eChannel7))  return false;
-	JobTick();   if (!DisplayEcg(fecg8,  eChannel8))  return false;
-	JobTick();   if (!DisplayEcg(fecg12, eChannel12)) return false;
-	JobTick();   if (!DisplayEcg(fecg34, eChannel34)) return false;
+	ftools.JobStart(pbJob, 10);
+	ftools.JobTick();   if (!DisplayEcg(fecg2,  eChannel2))  return false;
+	ftools.JobTick();   if (!DisplayEcg(fecg3,  eChannel3))  return false;
+	ftools.JobTick();   if (!DisplayEcg(fecg4,  eChannel4))  return false;
+	ftools.JobTick();   if (!DisplayEcg(fecg5,  eChannel5))  return false;
+	ftools.JobTick();   if (!DisplayEcg(fecg6,  eChannel6))  return false;
+	ftools.JobTick();   if (!DisplayEcg(fecg7,  eChannel7))  return false;
+	ftools.JobTick();   if (!DisplayEcg(fecg8,  eChannel8))  return false;
+	ftools.JobTick();   if (!DisplayEcg(fecg12, eChannel12)) return false;
+	ftools.JobTick();   if (!DisplayEcg(fecg34, eChannel34)) return false;
 
-	JobTick(); if (!DisplayEcg(fecg56, eChannel56Hand))	return false;
-	JobEnd();
+	ftools.JobTick(); if (!DisplayEcg(fecg56, eChannel56Hand))	return false;
+	ftools.JobEnd();
 
 	return true;
 	}
@@ -172,8 +156,6 @@ bool TfmAddFile::SaveFile()
 		return false;
 		}
 
-	JobStart(11);
-
 	//fecg-Klassen sind durch ShowFile() gefüllt worden
 	sEcgData data;
 	data.session  = (int)cbSession->Items->Objects[cbSession->ItemIndex];
@@ -186,21 +168,23 @@ bool TfmAddFile::SaveFile()
 	data.visBeats = edRpeaks->Text.ToInt();
 	data.note     = mNote->Text;
 
+	ftools.JobStart(pbJob, 11);
+
 	int count = 0;
 	if (cbSaveLeads->ItemIndex == eSaveAll)
 		{
-		JobTick(); if (!SaveLead(fecg2,  data, eChannel2))  return false; count++;
-		JobTick(); if (!SaveLead(fecg3,  data, eChannel3))  return false; count++;
-		JobTick(); if (!SaveLead(fecg4,  data, eChannel4))  return false; count++;
-		JobTick(); if (!SaveLead(fecg5,  data, eChannel5))  return false; count++;
-		JobTick(); if (!SaveLead(fecg6,  data, eChannel6))  return false; count++;
-		JobTick(); if (!SaveLead(fecg7,  data, eChannel7))  return false; count++;
-		JobTick(); if (!SaveLead(fecg8,  data, eChannel8))  return false; count++;
-		JobTick(); if (!SaveLead(fecg12, data, eChannel12)) return false; count++;
-		JobTick(); if (!SaveLead(fecg34, data, eChannel34)) return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg2,  data, eChannel2))  return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg3,  data, eChannel3))  return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg4,  data, eChannel4))  return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg5,  data, eChannel5))  return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg6,  data, eChannel6))  return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg7,  data, eChannel7))  return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg8,  data, eChannel8))  return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg12, data, eChannel12)) return false; count++;
+		ftools.JobTick(); if (!SaveLead(fecg34, data, eChannel34)) return false; count++;
 		}
 
-	JobTick();
+	ftools.JobTick();
 	if (cbChannel56->ItemIndex == 1)
 		{
 		if (!SaveLead(fecg56, data, eChannel56Hand))
@@ -218,9 +202,9 @@ bool TfmAddFile::SaveFile()
 		}
 	count++;
 
-	JobTick();
+	ftools.JobTick();
 	ftools.MsgBox("Speichern erfolgreich, es wurden %s Signal(e) gespeichert", String(count));
-    JobEnd();
+    ftools.JobEnd();
 	return true;
 	}
 //---------------------------------------------------------------------------

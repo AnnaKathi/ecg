@@ -115,6 +115,8 @@ public:
 
 	iarray_t	remove(const iarray_t& source, const iarray_t& remove, int val_index = 0);
 
+	iarray_t 	getOriginalPoints(iarray_t original, iarray_t points);
+
 __property int PointWidth = { write=set_PointWidth };
 __property TColor PointColor = { write=set_PointColor };
 

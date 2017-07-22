@@ -42,7 +42,7 @@ __property cMySqlDescDb&   researchers = { read=get_researchers  };
 __property cMySqlDescDb&   algpreproc  = { read=get_alg_preproc  };
 __property cMySqlDescDb&   algrpeaks   = { read=get_alg_rpeaks   };
 __property cMySqlDescDb&   algfeatures = { read=get_alg_features };
-__property cMySqlDescDb&   positions   = { read=get_positions    };
+__property cMySqlDescDb&   channels    = { read=get_channels     };
 __property cMySqlDescDb&   diseases    = { read=get_diseases     };
 __property cMySqlDescDb&   states      = { read=get_states       };
 __property cMySqlDescDb&   postures    = { read=get_postures     };
@@ -72,7 +72,7 @@ private:
 	cMySqlDescDb*	fresearchers;  cMySqlDescDb&	get_researchers();
 	cMySqlDescDb*	fpostures;     cMySqlDescDb&	get_postures();
 	cMySqlDescDb*	fstates;       cMySqlDescDb&	get_states();
-	cMySqlDescDb*	fpositions;    cMySqlDescDb&	get_positions();
+	cMySqlDescDb*	fchannels;     cMySqlDescDb&	get_channels();
 	cMySqlDescDb*	falgpreproc;   cMySqlDescDb&	get_alg_preproc();
 	cMySqlDescDb*	falgrpeaks;    cMySqlDescDb&	get_alg_rpeaks();
 	cMySqlDescDb*	falgfeatures;  cMySqlDescDb&	get_alg_features();

@@ -57,7 +57,6 @@ object fmAddFile: TfmAddFile
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 943
     DesignSize = (
       1177
       41)
@@ -75,10 +74,8 @@ object fmAddFile: TfmAddFile
       Font.Style = [fsItalic]
       Lines.Strings = (
         'Eine EKG-Datei laden und in die Datenbank speichern.')
-      ParentColor = True
       ParentFont = False
       TabOrder = 0
-      ExplicitWidth = 927
     end
   end
   object pnBottom: TPanel
@@ -89,7 +86,6 @@ object fmAddFile: TfmAddFile
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 943
     DesignSize = (
       1177
       41)
@@ -101,7 +97,6 @@ object fmAddFile: TfmAddFile
       Action = acClose
       Anchors = [akTop, akRight]
       TabOrder = 0
-      ExplicitLeft = 845
     end
     object Button2: TButton
       Left = 8
@@ -119,7 +114,6 @@ object fmAddFile: TfmAddFile
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
       Visible = False
-      ExplicitWidth = 1076
     end
   end
   object pnLeft: TPanel
@@ -130,8 +124,6 @@ object fmAddFile: TfmAddFile
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = -2
-    ExplicitTop = 43
     DesignSize = (
       273
       584)

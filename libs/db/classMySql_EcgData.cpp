@@ -232,36 +232,36 @@ bool cMySqlEcgData::getRow()
 	fdata.note     = frow[10];
 
 	//Die EKG-Werte sind als semikolon-getrennter Longtext gespeichert
-	if (!LongstrToData(String(frow[11]), fdata.array_werte, fdata.werte))
+	if (!LongstrToData(String(frow[11]), fdata.werte))
 		return fail(6, "Das Longtext-Feld 'Werte' konnte nicht eingelesen werden");
+
+	fdata.array_werte = ftools.TextToArray(String(frow[11]), ";");
 
 	return true;
 	}
 //---------------------------------------------------------------------------
-bool cMySqlEcgData::LongstrToData(String str, iarray_t& array, double* werte)
+bool cMySqlEcgData::LongstrToData(String str, double* werte)
 	{
 	//todo use fTools-Funktionen
-	int pos; String ww;
+	int pos;
 	int ix = 0;
 	char feld[32];
+	double wert;
 
 	while ((pos = str.Pos(";")) > 0)
 		{
-		sprintf(feld, "%s", str.SubString(0, pos-1));
+		sprintf(feld, "%s", AnsiString(str.SubString(0, pos-1)));
 		str = str.SubString(pos+1, 99999);
-
-		werte[ix] = atof(feld);
-		array[ix].push_back(ix); //ix = zeit
-		array[ix].push_back(atof(feld));
-		ix++;
+		wert = String(feld).ToDouble();
+		werte[ix] = wert;
+        ix++;
 		}
 
 	if (str != "")
 		{
-		sprintf(feld, "%s", str);
-		werte[ix] = atof(feld);
-		array[ix].push_back(ix); //ix = zeit
-		array[ix].push_back(atof(feld));
+		sprintf(feld, "%s", AnsiString(str));
+		wert = String(feld).ToDouble();
+		werte[ix] = wert;
 		}
 
 	return true;

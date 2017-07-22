@@ -67,6 +67,46 @@ void cData::resetValues()
 /******************   Grundfunktionen   ************************************/
 /***************************************************************************/
 //---------------------------------------------------------------------------
+bool cData::getFromDb(iarray_t array)
+	{
+	if (array.size() <= 0) return false;
+	farr.clear();
+
+	int ix = 0; bool first = true;
+	int zeit; double wert; ilist_t v;
+	for (iarray_itr itr = array.begin(); itr != array.end(); itr++)
+		{
+		v = itr->second;
+		zeit = v[0];
+		wert = v[1];
+
+		if (first)
+			{
+			first = false;
+			farr_charac.VonMsec = farr_charac.BisMsec = zeit;
+			farr_charac.MinWert = farr_charac.MaxWert = wert;
+			}
+
+		if (zeit < farr_charac.VonMsec) farr_charac.VonMsec = zeit;
+		if (zeit > farr_charac.BisMsec) farr_charac.BisMsec = zeit;
+
+		if (wert < farr_charac.MinWert) farr_charac.MinWert = wert;
+		if (wert > farr_charac.MaxWert) farr_charac.MaxWert = wert;
+
+		farr[ix].push_back(zeit);
+		farr[ix].push_back(wert);
+		ix++;
+		}
+
+	if (farr.size() <= 0) return false;
+
+	farr_charac.VonIdx = 0;
+	farr_charac.BisIdx = ix-1;
+	farr_charac.Number = farr.size();
+
+    return true;
+	}
+//---------------------------------------------------------------------------
 bool cData::getFile(String file, eDatFormat format, String delim, int lead, int vonMsec, int bisMsec)
 	{
 	farr.clear();

@@ -36,6 +36,7 @@ __published:	// Von der IDE verwaltete Komponenten
 	TImage *img4;
 	TButton *btEcgViewer;
 	TButton *btAddLead;
+	TButton *btViewSignal;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall tStartupTimer(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
@@ -48,6 +49,7 @@ __published:	// Von der IDE verwaltete Komponenten
 	void __fastcall btTestEcgClick(TObject *Sender);
 	void __fastcall btEcgViewerClick(TObject *Sender);
 	void __fastcall btAddLeadClick(TObject *Sender);
+	void __fastcall btViewSignalClick(TObject *Sender);
 
 private:
 	cCsv        fcsv;   //nur zu Testzwecken, später wieder entfernen

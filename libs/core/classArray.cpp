@@ -539,6 +539,38 @@ double cArray::calcAvWert(const iarray_t& array)
 	return res;
 	}
 //---------------------------------------------------------------------------
+iarray_t cArray::getOriginalPoints(iarray_t original, iarray_t points)
+	{
+	//z.B. aus den Pounkten auf der Ableitung wieder die Punkte auf den
+	//Originaldaten finden
+
+	int ix = 0;
+	iarray_t result; ilist_t v; int zeit1, zeit2; double wert1, wert2;
+	for (iarray_itr itr = points.begin(); itr != points.end(); itr++)
+		{
+		v = itr->second;
+		zeit1 = v[0]+3; //+1 = TEST TODO
+		wert1 = v[1];
+
+		//todo geht hier original.find() ??
+		for (iarray_itr otr = original.begin(); otr != original.end(); otr++)
+			{
+			v = otr->second;
+			zeit2 = v[0];
+			wert2 = v[1];
+
+			if (zeit2 == zeit1)
+				{
+				result[ix].push_back(zeit2);
+				result[ix].push_back(wert2);
+                ix++;
+				break;
+				}
+			}
+		}
+    return result;
+	}
+//---------------------------------------------------------------------------
 void cArray::set_PointWidth(int width)
 	{
 	fPointWidth = width;

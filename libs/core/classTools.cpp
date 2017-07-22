@@ -11,6 +11,7 @@
 //---------------------------------------------------------------------------
 cTools::cTools()
 	{
+	pbJob = NULL;
 	}
 //---------------------------------------------------------------------------
 /***************************************************************************/
@@ -448,6 +449,29 @@ bool cTools::Log(const char* msg, ...)
 	fprintf(fp, "%s\n", buffer);
 	fclose(fp);
 	return true;
+	}
+//---------------------------------------------------------------------------
+void cTools::JobStart(TProgressBar* pb, int max)
+	{
+	pbJob = pb;
+	if (pbJob == NULL) return;
+	pbJob->Max = max;
+	pbJob->Position = 0;
+	pbJob->Visible = true;
+	}
+//---------------------------------------------------------------------------
+void cTools::JobTick(int pos) //pos ist mit 0 vorbesetzt
+	{
+	if (pbJob == NULL) return;
+	pbJob->Position += pos;
+    Application->ProcessMessages();
+	}
+//---------------------------------------------------------------------------
+void cTools::JobEnd()
+	{
+	if (pbJob == NULL) return;
+	pbJob->Visible = false;
+	pbJob = NULL;
 	}
 //---------------------------------------------------------------------------
 

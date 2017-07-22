@@ -4,11 +4,12 @@
 #pragma hdrstop
 #include <tchar.h>
 //---------------------------------------------------------------------------
-USEFORM("ecg_main.cpp", fmMain);
+USEFORM("ecg_saveFile.cpp", fmAddFile);
 USEFORM("ecg_viewer.cpp", fmEcgViewer);
+USEFORM("ecg_main.cpp", fmMain);
 USEFORM("addForms\addPeople.cpp", fmPerson);
 USEFORM("baseForms\basePeople.cpp", fmBasePeople);
-USEFORM("ecg_saveFile.cpp", fmAddFile);
+USEFORM("ecg_dbviewerSignale.cpp", fmViewSignal);
 //---------------------------------------------------------------------------
 #pragma link "ecgcore.lib"
 #pragma link "ecgmysql.lib"

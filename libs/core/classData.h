@@ -40,6 +40,7 @@ public:
 		 *  /return (bool) true im Erfolgsfall, sonst false
 		 */
 		bool		getFile(String file, eDatFormat format, String delim, int lead, int vonMsec, int bisMsec);
+        bool        getFromDb(iarray_t array);
 
 		//! Daten des Array in einem Image anzeigen
 		/*! Das interne Datenarray wird im übergebenen Image eingezeichnet. Der

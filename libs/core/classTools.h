@@ -101,7 +101,12 @@ public:
 
 		bool 		Log(const char* msg, ...);
 
+		void        JobStart(TProgressBar* pb, int max);
+		void        JobTick(int pos = 1);
+        void        JobEnd();
+
 private:
+    TProgressBar*   	pbJob;
 	};
 //---------------------------------------------------------------------------
 #endif
