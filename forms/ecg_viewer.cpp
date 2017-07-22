@@ -572,7 +572,7 @@ void TfmEcgViewer::BuildData(sEcgData& data)
 	{
 	data.session  = 1;
 	data.person   = 2;
-	data.position = 1;
+	data.channel  = 1;
 	data.state    = 1;
 	data.posture  = 1;
 

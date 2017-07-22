@@ -38,10 +38,10 @@ bool cMySqlEcgData::save(sEcgData data)
 	//Row muss vorher gesetzt sein
 	String s = DataToLongtext(data.werte);
 	String q =
-		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Positions_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Note`, `Signal`) VALUES (" +
+		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Channels_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Note`, `Signal`) VALUES (" +
 		String(data.session)  + ", " +
 		String(data.person)   + ", " +
-		String(data.position) + ", " +
+		String(data.channel)  + ", " +
 		String(data.state)    + ", " +
 		String(data.posture)  + ", " +
 		String(data.bpsys)    + ", " +
@@ -73,10 +73,10 @@ bool cMySqlEcgData::saveWithArray(sEcgData data)
 		return fail(3, "Duplicate Entries: Der Datensatz ist bereits vorhanden");
 
 	String q =
-		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Positions_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Note`, `Signal`) VALUES (" +
+		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Channels_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Note`, `Signal`) VALUES (" +
 		String(data.session)  + ", " +
 		String(data.person)   + ", " +
-		String(data.position) + ", " +
+		String(data.channel)  + ", " +
 		String(data.state)    + ", " +
 		String(data.posture)  + ", " +
 		String(data.bpsys)    + ", " +
@@ -101,10 +101,10 @@ bool cMySqlEcgData::findDup(sEcgData data)
 	String q = ftools.fmt("SELECT * FROM `%s` WHERE "
 		"`Sessions_ID`  = %d AND "
 		"`Subjects_ID`  = %d AND "
-		"`Positions_ID` = %d AND "
+		"`Channels_ID` = %d AND "
 		"`States_ID`    = %d AND "
 		"`Postures_ID`  = %d",
-		String(TABLE), data.session, data.person, data.position, data.state, data.posture);
+		String(TABLE), data.session, data.person, data.channel, data.state, data.posture);
 
 	if (!doQuery(q))
 		return fail(fwork.error_code, fwork.error_msg);
@@ -222,7 +222,7 @@ bool cMySqlEcgData::getRow()
 	fdata.ident    = atoi(frow[0]);
 	fdata.session  = atoi(frow[1]);
 	fdata.person   = atoi(frow[2]);
-	fdata.position = atoi(frow[3]);
+	fdata.channel  = atoi(frow[3]);
 	fdata.state    = atoi(frow[4]);
 	fdata.posture  = atoi(frow[5]);
 	fdata.bpsys    = atoi(frow[6]);

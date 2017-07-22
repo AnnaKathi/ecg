@@ -17,7 +17,12 @@
 #include <libs/core/classTools.h>
 #include <libs/core/classEcg.h>
 //---------------------------------------------------------------------------
-enum eLead {
+enum eSave {
+	eSaveAll = 0,
+    eSave56Only
+	};
+//---------------------------------------------------------------------------
+enum eChannel {
 	eNone = 0,
 	eChannel1 = 1,
 	eChannel2,
@@ -29,7 +34,9 @@ enum eLead {
 	eChannel8,
 	eChannel12,
 	eChannel34,
-	eChannel56
+	eChannel56Hand,
+	eChannel56Hals,
+	eChannel56Ohren
 	};
 //---------------------------------------------------------------------------
 class TfmAddFile : public TForm
@@ -54,28 +61,13 @@ __published:	// Von der IDE verwaltete Komponenten
 	TSpeedButton *SpeedButton1;
 	TAction *acLoadFile;
 	TLabel *Label2;
-	TLabel *Label3;
-	TComboBox *cbChannelTest1;
-	TLabel *Label4;
-	TComboBox *cbChannelTest2;
-	TLabel *Label5;
-	TComboBox *cbChannel12;
-	TLabel *Label6;
-	TComboBox *cbChannel34;
 	TLabel *Label7;
 	TComboBox *cbChannel56;
 	TPanel *pnClient;
-	TImage *img1;
+	TImage *img12;
+	TImage *img34;
+	TImage *img56;
 	TImage *img2;
-	TImage *img3;
-	TImage *img4;
-	TImage *img5;
-	TLabel *Label8;
-	TEdit *edRpeaks1;
-	TEdit *edRpeaks2;
-	TEdit *edRpeaks3;
-	TEdit *edRpeaks4;
-	TEdit *edRpeaks5;
 	TLabel *Label9;
 	TLabel *Label10;
 	TComboBox *cbPerson;
@@ -94,6 +86,16 @@ __published:	// Von der IDE verwaltete Komponenten
 	TMemo *mNote;
 	TLabel *Label17;
 	TProgressBar *pbJob;
+	TLabel *Label3;
+	TEdit *edRpeaks;
+	TImage *img3;
+	TImage *img4;
+	TImage *img5;
+	TImage *img6;
+	TImage *img7;
+	TImage *img8;
+	TLabel *Label4;
+	TComboBox *cbSaveLeads;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall tStartupTimer(TObject *Sender);
 	void __fastcall FormKeyPress(TObject *Sender, System::WideChar &Key);
@@ -108,11 +110,16 @@ private:
     cMySql&     fmysql;
 	cTools      ftools;
 
-	cEcg        fecg1;
 	cEcg        fecg2;
 	cEcg        fecg3;
 	cEcg        fecg4;
 	cEcg        fecg5;
+	cEcg        fecg6;
+	cEcg        fecg7;
+	cEcg        fecg8;
+	cEcg        fecg12;
+	cEcg        fecg34;
+	cEcg        fecg56;
 
 	void 		JobStart(int max);
 	void 		JobTick(int pos = 0);
@@ -121,10 +128,10 @@ private:
 	bool        FormComplete(); //true wenn alles ausgefüllt ist
 
 	bool        ShowFile(String ecgFile);
-	bool 		DisplayEcg(cEcg& fecg, eLead lead);
+	bool 		DisplayEcg(cEcg& fecg, eChannel channel);
 
 	bool        SaveFile();
-    bool        SaveLead(cEcg& fecg, sEcgData& data);
+    bool        SaveLead(cEcg& fecg, sEcgData& data, eChannel channel);
 
 public:
 	__fastcall TfmAddFile(TComponent* Owner);

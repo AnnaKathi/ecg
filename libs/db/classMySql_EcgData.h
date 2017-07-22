@@ -13,7 +13,7 @@ struct sEcgData
 	int			ident;
 	int			session;
 	int			person;
-	int			position;
+	int			channel;
 	int			state;
 	int			posture;
 	int			bpsys;

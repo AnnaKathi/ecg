@@ -102,6 +102,8 @@ bool cData::getFile(String file, eDatFormat format, String delim, int lead, int 
 	farr_charac.VonIdx = 0;
 	farr_charac.BisIdx = ix-1;
 	farr_charac.Number = farr.size();
+
+    fcsv->CloseFile();
 	return ok();
 	}
 //---------------------------------------------------------------------------
