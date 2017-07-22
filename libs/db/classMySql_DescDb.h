@@ -22,6 +22,7 @@ public:
 
 	//-- Daten laden
 	bool	get(int ident);
+	bool 	get(String bez);
 	bool	loadTable(String order = ""); //lädt die ganze Tabelle
 	bool	nextRow();
 

@@ -8,6 +8,9 @@
 cEcg::cEcg()
 	: frpeaks(new cRpeaks), fqrs(new cQrs), fheart(new cHeartbeats), fdata(new cData)
 	{
+	fNumber  = -1;
+	fEcgFile = "";
+	fImage   = NULL;
 	}
 //---------------------------------------------------------------------------
 cEcg::~cEcg()
@@ -40,5 +43,42 @@ cQrs& cEcg::get_qrs()
 cHeartbeats& cEcg::get_heart()
 	{
 	return *fheart;
+	}
+//---------------------------------------------------------------------------
+//----  getter und setter der Hilfsvariable  --------------------------------
+//---------------------------------------------------------------------------
+bool cEcg::set_number(int nr)
+	{
+	if (nr < 0) return false;
+	fNumber = nr;
+    return true;
+	}
+//---------------------------------------------------------------------------
+int cEcg::get_number()
+	{
+	return fNumber;
+	}
+//---------------------------------------------------------------------------
+bool cEcg::set_file(String file)
+	{
+	if (file == "" || !FileExists(file)) return false;
+	fEcgFile = file;
+	return true;
+	}
+//---------------------------------------------------------------------------
+String cEcg::get_file()
+	{
+	return fEcgFile;
+	}
+//---------------------------------------------------------------------------
+bool cEcg::set_image(TImage* img)
+	{
+	fImage = img;
+	return true;
+	}
+//---------------------------------------------------------------------------
+TImage* cEcg::get_image()
+	{
+	return fImage;
 	}
 //---------------------------------------------------------------------------

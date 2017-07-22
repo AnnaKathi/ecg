@@ -115,7 +115,7 @@ object fmMain: TfmMain
   end
   object btTestEcg: TButton
     Left = 8
-    Top = 200
+    Top = 163
     Width = 170
     Height = 25
     Caption = 'Test Ecg-Klasse'
@@ -124,12 +124,21 @@ object fmMain: TfmMain
   end
   object btEcgViewer: TButton
     Left = 8
-    Top = 272
+    Top = 224
     Width = 170
     Height = 25
     Caption = 'Ecg Viewer'
     TabOrder = 8
     OnClick = btEcgViewerClick
+  end
+  object btAddLead: TButton
+    Left = 8
+    Top = 255
+    Width = 170
+    Height = 25
+    Caption = 'Add File to DB'
+    TabOrder = 9
+    OnClick = btAddLeadClick
   end
   object tStartup: TTimer
     Enabled = False

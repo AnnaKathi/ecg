@@ -4,7 +4,7 @@ object fmEcgViewer: TfmEcgViewer
   Caption = 'EcgViewer'
   ClientHeight = 640
   ClientWidth = 1081
-  Color = clBtnFace
+  Color = clWindow
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11

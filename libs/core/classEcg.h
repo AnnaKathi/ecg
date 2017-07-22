@@ -30,6 +30,10 @@ __property cRpeaks& rpeaks	  = { read=get_rpeaks };//!< R-Peaks des EKG
 __property cQrs& qrs 		  = { read=get_qrs };   //!< QRS-Bereiche des EKG
 __property cHeartbeats& heart = { read=get_heart }; //!< Standardherzschlag des EKG
 
+__property int number    = { read=get_number, write=set_number };
+__property String file   = { read=get_file,   write=set_file };
+__property TImage* image = { read=get_image,  write=set_image };
+
 private:
 	cData*		fdata;
 	cData&		get_data();
@@ -42,6 +46,21 @@ private:
 
 	cHeartbeats*	fheart;
 	cHeartbeats&	get_heart();
+
+	//Hilfsvariablen, hier können Informationen hinterlegt werden, wenn mehrere
+    //cEcg-Klassen in einerm Formular verwendet werden
+	int         fNumber;  //zugeordnete Nummer
+	bool		set_number(int nr);
+	int         get_number();
+
+	String      fEcgFile; //zu laden aus dieser Datei
+	bool 		set_file(String file);
+	String      get_file();
+
+	TImage*     fImage;  //zugeordnetes Image
+	bool        set_image(TImage* img);
+    TImage*     get_image();
+
 	};
 //---------------------------------------------------------------------------
 #endif

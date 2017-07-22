@@ -22,6 +22,7 @@ struct sEcgData
 	String		note;
 	double		werte[3000];
 	iarray_t	array_werte;
+    int         visBeats;
 	};
 //---------------------------------------------------------------------------
 class PACKAGE cMySqlEcgData : public cBase
@@ -31,6 +32,9 @@ public:
 	~cMySqlEcgData();
 
 	bool 	save(sEcgData data);
+	bool 	saveWithArray(sEcgData data);
+
+    bool    findDup(sEcgData data);
 
 	bool	loadTable(); //lädt die ganze Tabelle
 	bool	loadByIdent(int ecg);
@@ -54,8 +58,10 @@ __property int num_rows = { read=get_num_rows };
 private:
 	cTools			ftools;
 
-	bool			LongstrToData(String str, sEcgData& data);
-	String 			DataToLongtext(sEcgData data);
+	bool 			LongstrToData(String str, iarray_t& array, double* werte);
+	//obsolete ?? bool			LongstrToData(int nr, String str, sEcgData& data);
+	String 			DataToLongtext(double* werte);
+	String 			ArrayToLongtext(iarray_t array);
 
 	bool			load(String condition);
 

@@ -36,9 +36,9 @@ bool cMySqlEcgData::doQuery(String q)
 bool cMySqlEcgData::save(sEcgData data)
 	{
 	//Row muss vorher gesetzt sein
-	String s = DataToLongtext(data);
+	String s = DataToLongtext(data.werte);
 	String q =
-		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Positions_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `Note`, `ECG`) VALUES (" +
+		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Positions_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Note`, `Signal`) VALUES (" +
 		String(data.session)  + ", " +
 		String(data.person)   + ", " +
 		String(data.position) + ", " +
@@ -47,6 +47,7 @@ bool cMySqlEcgData::save(sEcgData data)
 		String(data.bpsys)    + ", " +
 		String(data.bpdia)    + ", " +
 		String(data.puls)     + ", " +
+		String(data.visBeats) + ", " +
 		"'" + data.note + "'," +
 		"'" + s + "')";
 
@@ -58,6 +59,61 @@ bool cMySqlEcgData::save(sEcgData data)
 		//weiterarbeiten können
 		return getLast();
 		}
+	}
+//---------------------------------------------------------------------------
+bool cMySqlEcgData::saveWithArray(sEcgData data)
+	{
+	//Row muss vorher gesetzt sein
+	String s = ArrayToLongtext(data.array_werte);
+
+	//Duplicate Entries verhindern !
+	//Ein Eintrag ist doppelt, wenn die folgende Kombi schon vorhanden ist:
+	//Session - Person - Position - State - Posture
+	if (findDup(data))
+		return fail(3, "Duplicate Entries: Der Datensatz ist bereits vorhanden");
+
+	String q =
+		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Positions_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Note`, `Signal`) VALUES (" +
+		String(data.session)  + ", " +
+		String(data.person)   + ", " +
+		String(data.position) + ", " +
+		String(data.state)    + ", " +
+		String(data.posture)  + ", " +
+		String(data.bpsys)    + ", " +
+		String(data.bpdia)    + ", " +
+		String(data.puls)     + ", " +
+		String(data.visBeats) + ", " +
+		"'" + data.note + "'," +
+		"'" + s + "')";
+
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
+	else
+		{
+		//Datensatz wieder reinladen, damit aufrufende Komponenten damit
+		//weiterarbeiten können
+		return getLast();
+		}
+	}
+//---------------------------------------------------------------------------
+bool cMySqlEcgData::findDup(sEcgData data)
+	{
+	String q = ftools.fmt("SELECT * FROM `%s` WHERE "
+		"`Sessions_ID`  = %d AND "
+		"`Subjects_ID`  = %d AND "
+		"`Positions_ID` = %d AND "
+		"`States_ID`    = %d AND "
+		"`Postures_ID`  = %d",
+		String(TABLE), data.session, data.person, data.position, data.state, data.posture);
+
+	if (!doQuery(q))
+		return fail(fwork.error_code, fwork.error_msg);
+
+	if (fres == NULL) return fail(fwork.error_code, fwork.error_msg);
+
+	frow = mysql_fetch_row(fres);
+	if (frow != NULL) return true; //Duplicates gefunden
+	else return false; //keien Duplicates gefunden
 	}
 //---------------------------------------------------------------------------
 /***************************************************************************/
@@ -172,51 +228,53 @@ bool cMySqlEcgData::getRow()
 	fdata.bpsys    = atoi(frow[6]);
 	fdata.bpdia    = atoi(frow[7]);
 	fdata.puls     = atoi(frow[8]);
-	fdata.note     = frow[9];
+	fdata.visBeats = atoi(frow[9]);
+	fdata.note     = frow[10];
 
 	//Die EKG-Werte sind als semikolon-getrennter Longtext gespeichert
-	if (!LongstrToData(String(frow[10]), fdata))
+	if (!LongstrToData(String(frow[11]), fdata.array_werte, fdata.werte))
 		return fail(6, "Das Longtext-Feld 'Werte' konnte nicht eingelesen werden");
 
 	return true;
 	}
 //---------------------------------------------------------------------------
-bool cMySqlEcgData::LongstrToData(String str, sEcgData& data)
+bool cMySqlEcgData::LongstrToData(String str, iarray_t& array, double* werte)
 	{
 	//todo use fTools-Funktionen
 	int pos; String ww;
 	int ix = 0;
 	char feld[32];
+
 	while ((pos = str.Pos(";")) > 0)
 		{
 		sprintf(feld, "%s", str.SubString(0, pos-1));
 		str = str.SubString(pos+1, 99999);
 
-		data.werte[ix] = atof(feld);
-		data.array_werte[ix].push_back(ix); //ix = zeit
-		data.array_werte[ix].push_back(atof(feld));
+		werte[ix] = atof(feld);
+		array[ix].push_back(ix); //ix = zeit
+		array[ix].push_back(atof(feld));
 		ix++;
 		}
 
 	if (str != "")
 		{
 		sprintf(feld, "%s", str);
-		data.werte[ix] = atof(feld);
-		data.array_werte[ix].push_back(ix); //ix = zeit
-		data.array_werte[ix].push_back(atof(feld));
+		werte[ix] = atof(feld);
+		array[ix].push_back(ix); //ix = zeit
+		array[ix].push_back(atof(feld));
 		}
 
 	return true;
 	}
 //---------------------------------------------------------------------------
-String cMySqlEcgData::DataToLongtext(sEcgData data)
+String cMySqlEcgData::DataToLongtext(double* werte)
 	{
 	//todo use fTools-Funktionen
 	String s = "";
 	char feld[64]; double wert;
 	for (int i = 0; i < 3000; i++)
 		{
-		sprintf(feld, "%.8f", data.werte[i]);
+		sprintf(feld, "%.8f", werte[i]);
     	wert = atof(feld);
 		if (i == 0)
 			s = String(wert);
@@ -224,6 +282,26 @@ String cMySqlEcgData::DataToLongtext(sEcgData data)
 			s += ";" + String(wert);
 		}
 		
+	return s;
+	}
+//---------------------------------------------------------------------------
+String cMySqlEcgData::ArrayToLongtext(iarray_t array)
+	{
+	String s = "";
+	double wert; bool first = true;
+	for (iarray_itr itr = array.begin(); itr != array.end(); itr++)
+		{
+		ilist_t v = itr->second;
+		wert = v[1];
+		if (first)
+			{
+			s = String(wert);
+			first =false;
+            }
+		else
+			s += ";" + String(wert);
+		}
+
 	return s;
 	}
 //---------------------------------------------------------------------------

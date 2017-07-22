@@ -186,7 +186,7 @@ bool cMySqlSession::listInCombo(TComboBox* cb, int mode) //mode ist mit 0 vorbes
 	cb->Items->AddObject("- alle Daten -", (TObject*)0);
 	while (nextRow())
 		{
-		if (mode == 1)  str = fdata.stamp; //2017-05-31 11:03:41
+	    if (mode == 1)  str = fdata.stamp; //2017-05-31 11:03:41
 		else 			str = fdata.stamp; //todo Datum umdrehen
 
 		cb->Items->AddObject(str, (TObject*)fdata.ident);

@@ -8,6 +8,7 @@ USEFORM("ecg_main.cpp", fmMain);
 USEFORM("ecg_viewer.cpp", fmEcgViewer);
 USEFORM("addForms\addPeople.cpp", fmPerson);
 USEFORM("baseForms\basePeople.cpp", fmBasePeople);
+USEFORM("ecg_saveFile.cpp", fmAddFile);
 //---------------------------------------------------------------------------
 #pragma link "ecgcore.lib"
 #pragma link "ecgmysql.lib"
@@ -19,7 +20,6 @@ int WINAPI _tWinMain(HINSTANCE, HINSTANCE, LPTSTR, int)
 		Application->Initialize();
 		Application->MainFormOnTaskBar = true;
 		Application->CreateForm(__classid(TfmMain), &fmMain);
-		Application->CreateForm(__classid(TfmEcgViewer), &fmEcgViewer);
 		Application->Run();
 	}
 	catch (Exception &exception)

@@ -5,6 +5,7 @@
 #include <libs/db/classMySql.h>
 
 #include "ecg_viewer.h"
+#include "ecg_saveFile.h"
 
 #include "ecg_main.h"
 //---------------------------------------------------------------------------
@@ -440,6 +441,11 @@ void __fastcall TfmMain::btTestEcgClick(TObject *Sender)
 void __fastcall TfmMain::btEcgViewerClick(TObject *Sender)
 	{
     DlgEcgViewer(this);
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::btAddLeadClick(TObject *Sender)
+	{
+	DlgSaveEcgFile(this);
 	}
 //---------------------------------------------------------------------------
 
