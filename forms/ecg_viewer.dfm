@@ -377,10 +377,19 @@ object fmEcgViewer: TfmEcgViewer
         TabOrder = 1
         OnClick = btSave2Click
       end
+      object btSave: TButton
+        Tag = 4
+        Left = 8
+        Top = 6
+        Width = 125
+        Height = 25
+        Action = acSaveArffFile
+        TabOrder = 2
+      end
     end
     object btQrsTurns: TButton
-      Left = 191
-      Top = 303
+      Left = 8
+      Top = 317
       Width = 125
       Height = 25
       Caption = 'Qrs-Punkte anzeigen'
@@ -388,22 +397,13 @@ object fmEcgViewer: TfmEcgViewer
       OnClick = btQrsTurnsClick
     end
     object btRpeaks: TButton
-      Left = 206
-      Top = 272
+      Left = 9
+      Top = 286
       Width = 125
       Height = 25
       Caption = 'R-Peaks anzeigen'
       TabOrder = 15
       OnClick = btRpeaksClick
-    end
-    object btSave: TButton
-      Tag = 4
-      Left = 8
-      Top = 286
-      Width = 125
-      Height = 25
-      Action = acSaveArffFile
-      TabOrder = 16
     end
   end
   object pnClient: TPanel

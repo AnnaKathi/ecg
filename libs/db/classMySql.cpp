@@ -1,3 +1,4 @@
+//TODO: atoi überall umstellen auf String(fro2[x]).ToIntDef(0);
 //---------------------------------------------------------------------------
 #pragma hdrstop
 

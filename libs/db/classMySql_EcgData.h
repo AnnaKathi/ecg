@@ -19,6 +19,7 @@ struct sEcgData
 	int			bpsys;
 	int			bpdia;
 	int			puls;
+    int         usability;
 	String		note;
 	double		werte[3000];
 	iarray_t	array_werte;
@@ -34,9 +35,13 @@ public:
 	bool 	save(sEcgData data);
 	bool 	saveWithArray(sEcgData data);
 
-    bool    findDup(sEcgData data);
+	//UPDATE `ecg`.`ecgdata` SET `Usability`=4 WHERE  `ID`=64;
+	bool    update(String feld, String newcontent, int ident);
+
+	bool    findDup(sEcgData data);
 
 	bool	loadTable(); //lädt die ganze Tabelle
+    bool    loadFilteredTable(sEcgData filter);
 	bool	loadByIdent(int ecg);
 	bool	loadByPerson(int person); //lädt nur die Daten von Person
 	bool	loadBySession(int session);
@@ -63,6 +68,8 @@ private:
 	String 			ArrayToLongtext(iarray_t array);
 
 	bool			load(String condition);
+	void 			addCondition(String& condition, String feld, String filter);
+
 
 	//-- MySql-Variablen und -Funktionen
 	sEcgData		fdata;

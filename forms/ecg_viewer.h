@@ -83,8 +83,8 @@ __published:	// Von der IDE verwaltete Komponenten
 	TAction *acReadFile;
 	TAction *acCutCurve;
 	TAction *acMovingAv;
-	TButton *btSave;
 	TAction *acSaveArffFile;
+	TButton *btSave;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormKeyPress(TObject *Sender, System::WideChar &Key);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);

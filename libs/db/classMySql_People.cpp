@@ -226,6 +226,7 @@ bool cMySqlPeople::listInCombo(TComboBox* cb, int mode) //mode ist mit 0 vorbese
 		return fail(fwork.error_code, fwork.error_msg);
 
 	cb->Items->Clear();
+	cb->Items->AddObject("- alle Daten -", (TObject*)0);
 	String pers;
 	while (nextRow())
 		{

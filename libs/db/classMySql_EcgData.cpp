@@ -38,16 +38,17 @@ bool cMySqlEcgData::save(sEcgData data)
 	//Row muss vorher gesetzt sein
 	String s = DataToLongtext(data.werte);
 	String q =
-		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Channels_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Note`, `Signal`) VALUES (" +
-		String(data.session)  + ", " +
-		String(data.person)   + ", " +
-		String(data.channel)  + ", " +
-		String(data.state)    + ", " +
-		String(data.posture)  + ", " +
-		String(data.bpsys)    + ", " +
-		String(data.bpdia)    + ", " +
-		String(data.puls)     + ", " +
-		String(data.visBeats) + ", " +
+		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Channels_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Usability`, `Note`, `Signal`) VALUES (" +
+		String(data.session)   + ", " +
+		String(data.person)    + ", " +
+		String(data.channel)   + ", " +
+		String(data.state)     + ", " +
+		String(data.posture)   + ", " +
+		String(data.bpsys)     + ", " +
+		String(data.bpdia)     + ", " +
+		String(data.puls)      + ", " +
+		String(data.visBeats)  + ", " +
+		String(data.usability) + ", " +
 		"'" + data.note + "'," +
 		"'" + s + "')";
 
@@ -73,16 +74,17 @@ bool cMySqlEcgData::saveWithArray(sEcgData data)
 		return fail(3, "Duplicate Entries: Der Datensatz ist bereits vorhanden");
 
 	String q =
-		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Channels_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Note`, `Signal`) VALUES (" +
-		String(data.session)  + ", " +
-		String(data.person)   + ", " +
-		String(data.channel)  + ", " +
-		String(data.state)    + ", " +
-		String(data.posture)  + ", " +
-		String(data.bpsys)    + ", " +
-		String(data.bpdia)    + ", " +
-		String(data.puls)     + ", " +
-		String(data.visBeats) + ", " +
+		"INSERT INTO `ecgdata` (`Sessions_ID`, `Subjects_ID`, `Channels_ID`, `States_ID`, `Postures_ID`, `BPSys`, `BPDia`, `Puls`, `VisNoOfBeats`, `Usability`, `Note`, `Signal`) VALUES (" +
+		String(data.session)   + ", " +
+		String(data.person)    + ", " +
+		String(data.channel)   + ", " +
+		String(data.state)     + ", " +
+		String(data.posture)   + ", " +
+		String(data.bpsys)     + ", " +
+		String(data.bpdia)     + ", " +
+		String(data.puls)      + ", " +
+		String(data.visBeats)  + ", " +
+		String(data.usability) + ", " +
 		"'" + data.note + "'," +
 		"'" + s + "')";
 
@@ -93,6 +95,22 @@ bool cMySqlEcgData::saveWithArray(sEcgData data)
 		//Datensatz wieder reinladen, damit aufrufende Komponenten damit
 		//weiterarbeiten können
 		return getLast();
+		}
+	}
+//---------------------------------------------------------------------------
+bool cMySqlEcgData::update(String feld, String newcontent, int ident)
+	{
+	//UPDATE `ecg`.`ecgdata` SET `Usability`=4 WHERE  `ID`=64;
+	String q = ftools.fmt("UPDATE `%s` SET `%s` = '%s' WHERE `ID`=%d",
+		String(TABLE), feld.c_str(), newcontent.c_str(), ident);
+
+	if (!fwork.send(q))
+		return fail(fwork.error_code, fwork.error_msg);
+	else
+		{
+		//Datensatz wieder reinladen, damit aufrufende Komponenten damit
+		//weiterarbeiten können
+		return loadByIdent(ident);
 		}
 	}
 //---------------------------------------------------------------------------
@@ -124,6 +142,34 @@ bool cMySqlEcgData::loadTable()
 	{
 	String q = "SELECT * FROM `" + String(TABLE) + "`";
 	return doQuery(q);
+	}
+//---------------------------------------------------------------------------
+bool cMySqlEcgData::loadFilteredTable(sEcgData filter)
+	{
+	String condition = "";
+	if (filter.ident > 0) addCondition(condition, "ID", String(filter.ident));
+	if (filter.session > 0) addCondition(condition, "sessions_ID", String(filter.session));
+	if (filter.person  > 0) addCondition(condition, "subjects_ID", String(filter.person));
+	if (filter.channel > 0) addCondition(condition, "channels_ID", String(filter.channel));
+	if (filter.state   > 0) addCondition(condition, "states_ID", String(filter.state));
+	if (filter.posture > 0) addCondition(condition, "postures_ID", String(filter.posture));
+    //todo BPSys, BPDis, Puls ??
+
+	if (filter.usability > 0) addCondition(condition, "usability",    String(filter.usability));
+	if (filter.visBeats  > 0) addCondition(condition, "VisNoOfBeats", String(filter.visBeats));
+
+	if (condition == "")
+		return loadTable();
+	else
+		return load(condition);
+	}
+//---------------------------------------------------------------------------
+void cMySqlEcgData::addCondition(String& condition, String feld, String filter)
+	{
+	if (condition == "")
+		condition = feld + "='" + filter + "'";
+	else
+		condition += " AND " + feld + "='" + filter + "'";
 	}
 //---------------------------------------------------------------------------
 bool cMySqlEcgData::loadByIdent(int ecg)
@@ -219,23 +265,26 @@ bool cMySqlEcgData::getRow()
 	//aus row die fdata-Werte lesen
 	if (frow == NULL) return false;
 
-	fdata.ident    = atoi(frow[0]);
-	fdata.session  = atoi(frow[1]);
-	fdata.person   = atoi(frow[2]);
-	fdata.channel  = atoi(frow[3]);
-	fdata.state    = atoi(frow[4]);
-	fdata.posture  = atoi(frow[5]);
-	fdata.bpsys    = atoi(frow[6]);
-	fdata.bpdia    = atoi(frow[7]);
-	fdata.puls     = atoi(frow[8]);
-	fdata.visBeats = atoi(frow[9]);
-	fdata.note     = frow[10];
+	fdata.ident     = String(frow[0]).ToIntDef(0);
+	fdata.session   = String(frow[1]).ToIntDef(0);
+	fdata.person    = String(frow[2]).ToIntDef(0);
+	fdata.channel   = String(frow[3]).ToIntDef(0);
+	fdata.state     = String(frow[4]).ToIntDef(0);
+	fdata.posture   = String(frow[5]).ToIntDef(0);
+	fdata.bpsys     = String(frow[6]).ToIntDef(0);
+	fdata.bpdia     = String(frow[7]).ToIntDef(0);
+	fdata.puls      = String(frow[8]).ToIntDef(0);
+	fdata.visBeats  = String(frow[9]).ToIntDef(0);
+	fdata.usability = String(frow[10]).ToIntDef(0);
+	fdata.note      = frow[11];
+
+    String test = String(frow[12]);
 
 	//Die EKG-Werte sind als semikolon-getrennter Longtext gespeichert
-	if (!LongstrToData(String(frow[11]), fdata.werte))
+	if (!LongstrToData(String(frow[12]), fdata.werte))
 		return fail(6, "Das Longtext-Feld 'Werte' konnte nicht eingelesen werden");
 
-	fdata.array_werte = ftools.TextToArray(String(frow[11]), ";");
+	fdata.array_werte = ftools.TextToArray(String(frow[12]), ";");
 
 	return true;
 	}

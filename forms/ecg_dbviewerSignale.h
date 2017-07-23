@@ -29,7 +29,6 @@ __published:	// Von der IDE verwaltete Komponenten
 	TTimer *tStartup;
 	TActionList *ActionList;
 	TAction *acClose;
-	TListView *lvSignale;
 	TPanel *pnClient;
 	TImage *img;
 	TMemo *mMsg;
@@ -44,7 +43,26 @@ __published:	// Von der IDE verwaltete Komponenten
 	TButton *Button6;
 	TAction *acCheckAllSignals;
 	TCheckBox *cxAusgabe;
-	TComboBox *cbCheckSignale;
+	TComboBox *cbCheckAllPosture;
+	TLabel *Label1;
+	TComboBox *cbUsability;
+	TAction *acChangeUsability;
+	TComboBox *cbCheckAllUsability;
+	TPanel *pnLeft;
+	TListView *lvSignale;
+	TPanel *pnDbFilter;
+	TBevel *Bevel3;
+	TButton *Button7;
+	TAction *acLoadDb;
+	TLabel *Label2;
+	TLabel *Label3;
+	TComboBox *cbFSession;
+	TComboBox *cbFPerson;
+	TLabel *Label4;
+	TLabel *Label5;
+	TComboBox *cbFChannel;
+	TLabel *Label6;
+	TComboBox *cbFUsability;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall tStartupTimer(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
@@ -56,6 +74,9 @@ __published:	// Von der IDE verwaltete Komponenten
 	void __fastcall acShowSignalExecute(TObject *Sender);
 	void __fastcall acCalcRpeaksExecute(TObject *Sender);
 	void __fastcall acCheckAllSignalsExecute(TObject *Sender);
+	void __fastcall acChangeUsabilityExecute(TObject *Sender);
+	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
+	void __fastcall acLoadDbExecute(TObject *Sender);
 
 private:
 	cMySql&     fmysql;
@@ -63,11 +84,20 @@ private:
 	cArray      farray;
 	cEcg        fecg;
 
+	//-- Hilfsfunktionen
 	void 		print(char* msg, ...);
+	int         getSelectedListItem();
+
+	//-- Daten laden, anzeigen und ändern
 	void 		LoadSignale();
+    sEcgData    BuildFilter();
 	void        ShowSignal(int id);
+	void        SaveUsability(int id, int usability);
+
+	//-- R-Peaks für dieses Signal berechnen
 	void        GetRpeaks(int id);
 
+	//-- R-Peaks über alle Signale berechnen, todo: auslagern in Klasse RPeaks
     bool        bAbort;
 	void        CheckAllSignals();
 	bool 		CheckSignal(int id, int& rpeaks_erwartet, int& rpeaks_gefunden);

@@ -13,7 +13,6 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TfmMain *fmMain;
-//cMySql __declspec(dllimport) fmysql;
 //---------------------------------------------------------------------------
 __fastcall TfmMain::TfmMain(TComponent* Owner)
 	: TForm(Owner)
@@ -35,6 +34,7 @@ void __fastcall TfmMain::FormCreate(TObject *Sender)
 void __fastcall TfmMain::tStartupTimer(TObject *Sender)
 	{
 	tStartup->Enabled = false;
+	pnMain->Enabled = false;
 	Cursor = crHourGlass;
 
 	//Testschalter NoMySql berücksichtigen, ermöglichst einen Testbetrieb ohne MySql
@@ -91,6 +91,7 @@ void __fastcall TfmMain::tStartupTimer(TObject *Sender)
 
 	setStatus("Startup finished - ready to go");
 
+	pnMain->Enabled = true;
 	Cursor = crDefault;
 	}
 //---------------------------------------------------------------------------
@@ -186,272 +187,61 @@ void TfmMain::setDbInfo()
 		fmysql.features.getSize()), 1);
 	}
 //---------------------------------------------------------------------------
+/***************************************************************************/
+/******************   Funktionen   *****************************************/
+/***************************************************************************/
+//---------------------------------------------------------------------------
+/***************************************************************************/
+/********************   Actions   ******************************************/
+/***************************************************************************/
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::acCloseExecute(TObject *Sender)
+	{
+	Close();
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::acAnalyseEcgExecute(TObject *Sender)
+	{
+	DlgEcgViewer(this);
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::acAnalyseSignalExecute(TObject *Sender)
+	{
+	DlgDbViewerSignale(this);
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::acEcgFileAddExecute(TObject *Sender)
+	{
+	DlgSaveEcgFile(this);
+	}
+//---------------------------------------------------------------------------
+/***************************************************************************/
+/**************   Meldungen vom Formular   *********************************/
+/***************************************************************************/
+//---------------------------------------------------------------------------
 void __fastcall TfmMain::FormKeyPress(TObject *Sender, System::WideChar &Key)
 	{
 	if (Key == VK_ESCAPE)
 		{
 		Key = 0;
-		Close();
-        }
+		acCloseExecute(Sender);
+		}
 	}
 //---------------------------------------------------------------------------
-//---  Testbuttons  ---------------------------------------------------------
-//---------------------------------------------------------------------------
-void TfmMain::ln(String line)
+void __fastcall TfmMain::btClassifySelectClick(TObject *Sender)
 	{
-	mInfo->Lines->Add(line);
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btTestMySqlClick(TObject *Sender)
-	{
-	cMySqlPeople& pp = fmysql.people;
+	String cl = Sender->ClassName();
+	if (cl != "TBitBtn") return;
+	TComponent* comp = (TComponent*)Sender;
 
-	ln(ftools.fmt("Datenbank-Test 'People'"));
+	POINT pt;
+	GetCursorPos(&pt);
 
-	ln(ftools.fmt("\tAnz. Personen: %s", String(pp.getSize())));
-
-	sPeople p;
-	sprintf(p.firstname, "%s", "Otto");
-	sprintf(p.lastname,  "%s", "Mustermann");
-	p.sex       = 0;
-	p.age       = 99;
-	p.height    = 180;
-	p.weight    = 80;
-
-	if (pp.insert(p))
-		ln(ftools.fmt("\tPerson hinzugefügt: (%d) %s",
-			pp.row.ident, String(pp.row.lastname)));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, Person konnte nicht gespeichert werden"));
-		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
-		return;
-		}
-
-	int id = pp.row.ident;
-	if (pp.get(id))
-		ln(ftools.fmt("\tPerson %d geladen: %s %s",
-			pp.row.ident,
-			String(pp.row.firstname),
-			String(pp.row.lastname)));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, Person konnte nicht geladen werden"));
-		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
-		return;
-		}
-
-	if (pp.deleteByIdent(id))
-		ln(ftools.fmt("\tPerson %d gelöscht", id));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, Person konnte nicht gelöscht werden"));
-		ln(ftools.fmt("\tMySqlPeople meldet: %s", pp.error_msg));
-		return;
-		}
-
-	ln("Test-Ende");
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btTestCsvClick(TObject *Sender)
-	{
-	ln(ftools.fmt("Test Klasse 'cCsv'"));
-	String file = "S:\\Anna\\Ecg-Daten\\Nora liegend.txt";
-	ln(ftools.fmt("\tEinzulesende Datei: %s", file));
-
-	if (fcsv.OpenFile(file, formatADS, "\t", 3))
-		ln(ftools.fmt("\tDatei erfolgreich geöffnet"));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, Datei konnte nicht geöffnet werden."));
-		ln(ftools.fmt("\tcCsv meldet: %s", fcsv.error_msg));
-		return;
-		}
-
-	if (fcsv.StartAt(0))
-		ln(ftools.fmt("\tDatei erfolgreich begonnen"));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, Datei konnte nicht gestartet werden."));
-		ln(ftools.fmt("\tcCsv meldet: %s", fcsv.error_msg));
-		return;
-		}
-
-	int count = 0;
-	ln(ftools.fmt("\tDrucke 10 Testzeilen..."));
-	while (fcsv.NextUntil(100))
-		{
-		count++;
-		if (count > 10) break;
-
-		ln(ftools.fmt(
-			"\t\t%02d: %.8f \t%.8f \t%.8f",
-				fcsv.getLineNo(),
-				fcsv.getChannel(1),
-				fcsv.getChannel(2),
-				fcsv.getChannel(3)));
-		}
-
-	fcsv.CloseFile();
-	ln("Test-Ende");
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btTestMathClick(TObject *Sender)
-	{
-	ln(ftools.fmt("Test Klasse 'cMath'"));
-
-	iarray_t array;
-	Randomize();
-
-	int wert;
-	for (int i = 0; i < 100; i++)
-		{
-		wert = Random(100);
-		array[i].push_back(i);
-		array[i].push_back(wert);
-		}
-
-	String line = "\t";
-	for (int i = 0; i < 100; i++)
-		line += String(array[i][1]) + ", ";
-	ln(line);
-
-	array = fmath.resort(array, true);
-	line = "\t";
-	for (iarray_itr itr = array.begin(); itr != array.end(); itr++)
-		{
-		ilist_t v = itr->second;
-		line += String(v[1]) + ", ";
-        }
-    ln(line);
-
-	array = fmath.calcDerivate(array);
-	line = "\t";
-	for (iarray_itr itr = array.begin(); itr != array.end(); itr++)
-		{
-		ilist_t v = itr->second;
-		line += String(v[1]) + ", ";
-		}
-	ln(line);
-
-	ln("Test-Ende");
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btTestArrayClick(TObject *Sender)
-	{
-	ln(ftools.fmt("Test Klasse 'cArray'"));
-
-	iarray_t array;
-	Randomize();
-
-	int wert;
-	for (int i = 0; i < 100; i++)
-		{
-		wert = Random(100);
-		array[i].push_back(i);
-		array[i].push_back(wert);
-		}
-
-	String line = "\t";
-	for (iarray_itr itr = array.begin(); itr != array.end(); itr++)
-		{
-		ilist_t v = itr->second;
-		line += String(v[1]) + ", ";
-		}
-	ln(line);
-
-	farray.redisplay(array, img1);
-	double av = farray.calcAvWert(array);
-	ln(ftools.fmt("\tDurchschnittswert Original: %.4f", av));
-
-	ln("Test-Ende");
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btTestDataClick(TObject *Sender)
-	{
-	ln(ftools.fmt("Test Klasse 'cData'"));
-
-	String file = "S:\\Anna\\Ecg-Daten\\Nora liegend.txt";
-	if (fdata.getFile(file, formatADS, "\t", 3, 0, 3000))
-		ln(ftools.fmt("\tDatei erfolgreich eingelesen: %s", file.c_str()));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, Datei konnte nicht geladen werden."));
-		ln(ftools.fmt("\tcData meldet: %s", fdata.error_msg));
-		return;
-		}
-
-	fdata.redisplay(img1);
-
-	iarray_t narray = fdata.normalize(fdata.data_array, 100);
-	farray.redisplay(narray, img2);
-
-	ln("Test-Ende");
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btTestEcgClick(TObject *Sender)
-	{
-	ln(ftools.fmt("Test Klasse 'cEcg'"));
-
-	String file = "S:\\Anna\\Ecg-Daten\\Nora liegend.txt";
-	if (fecg.data.getFile(file, formatADS, "\t", 3, 0, 3000))
-		ln(ftools.fmt("\tDatei erfolgreich eingelesen: %s", file.c_str()));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, Datei konnte nicht geladen werden."));
-		ln(ftools.fmt("\tcEcg meldet: %s", fecg.error_msg));
-		return;
-		}
-
-	fecg.data.redisplay(img1);
-
-	iarray_t rpeaks = fecg.rpeaks.find(fecg.data.data_array, NULL);
-	int n = rpeaks.size();
-	ln(ftools.fmt("\tR-Peaks gefunden: %d", n));
-	if (n <= 0) return;
-
-	farray.displayPoints(fecg.data.data_array, rpeaks, img1);
-
-	if (fecg.data.buildDerivates())
-		ln(ftools.fmt("\tAbleitungen erfolgreich gebildet"));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, die Ableitungen konnten nicht gebildet werden."));
-		ln(ftools.fmt("\tcEcg meldet: %s", fecg.error_msg));
-		return;
-		}
-
-	farray.redisplay(fecg.data.derivate1.deriv_array, img2);
-	farray.redisplay(fecg.data.derivate2.deriv_array, img3);
-
-	iarray_t heart = fecg.heart.calcAvBeat(fecg.data.data_array);
-	if (heart.size() > 0)
-		ln(ftools.fmt("\tStandardherzschlag erfolgreich gebildet"));
-	else
-		{
-		ln(ftools.fmt("\t## Fehler, der Standardherzschlag konnten nicht gebildet werden."));
-		ln(ftools.fmt("\tcEcg meldet: %s", fecg.error_msg));
-		return;
-		}
-
-	farray.redisplay(heart, img4);
-
-	ln("Test-Ende");
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btAddLeadClick(TObject *Sender)
-	{
-	DlgSaveEcgFile(this);
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btEcgViewerClick(TObject *Sender)
-	{
-	DlgEcgViewer(this);
-	}
-//---------------------------------------------------------------------------
-void __fastcall TfmMain::btViewSignalClick(TObject *Sender)
-	{
-	DlgDbViewerSignale(this);
+		 if (comp->Name == "btAnalysisSelect") PopupMenuAnalysis->Popup(pt.x, pt.y);
+	else if (comp->Name == "btDatabaseSelect") PopupMenuDatabase->Popup(pt.x, pt.y);
+	else if (comp->Name == "btSessionsSelect") PopupMenuSessions->Popup(pt.x, pt.y);
+	else if (comp->Name == "btFeaturesSelect") PopupMenuFeatures->Popup(pt.x, pt.y);
+	else if (comp->Name == "btClassifySelect") PopupMenuClassify->Popup(pt.x, pt.y);
 	}
 //---------------------------------------------------------------------------
 

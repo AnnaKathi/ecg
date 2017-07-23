@@ -15,6 +15,7 @@ object fmViewSignal: TfmViewSignal
   Position = poDesigned
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   PixelsPerInch = 96
   TextHeight = 13
@@ -38,6 +39,17 @@ object fmViewSignal: TfmViewSignal
     ExplicitLeft = -205
     ExplicitTop = 627
     ExplicitWidth = 1177
+  end
+  object Bevel3: TBevel
+    Left = 385
+    Top = 45
+    Width = 4
+    Height = 541
+    Align = alLeft
+    Shape = bsLeftLine
+    ExplicitLeft = 416
+    ExplicitTop = 192
+    ExplicitHeight = 50
   end
   object pnInfo: TPanel
     Left = 0
@@ -98,71 +110,44 @@ object fmViewSignal: TfmViewSignal
       Visible = False
     end
   end
-  object lvSignale: TListView
-    Left = 0
-    Top = 45
-    Width = 441
-    Height = 541
-    Align = alLeft
-    Columns = <
-      item
-        Caption = 'Nr'
-        Width = 35
-      end
-      item
-        Caption = 'Session'
-        Width = 90
-      end
-      item
-        Caption = 'Person'
-        Width = 80
-      end
-      item
-        Caption = 'Channel'
-        Width = 75
-      end
-      item
-        Caption = 'Zustand'
-        Width = 75
-      end
-      item
-        Caption = 'Lage'
-        Width = 75
-      end>
-    GridLines = True
-    ReadOnly = True
-    RowSelect = True
-    TabOrder = 2
-    ViewStyle = vsReport
-    OnDblClick = lvSignaleDblClick
-  end
   object pnClient: TPanel
-    Left = 441
+    Left = 389
     Top = 45
-    Width = 943
+    Width = 995
     Height = 541
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 3
-    ExplicitLeft = 552
-    ExplicitTop = 88
-    ExplicitWidth = 577
-    ExplicitHeight = 457
+    TabOrder = 2
+    Visible = False
+    ExplicitLeft = 447
+    ExplicitTop = 47
+    ExplicitWidth = 943
+    DesignSize = (
+      995
+      541)
     object img: TImage
       Left = 6
       Top = 48
       Width = 923
       Height = 201
     end
+    object Label1: TLabel
+      Left = 6
+      Top = 258
+      Width = 122
+      Height = 13
+      Caption = 'Brauchbarkeit des Signals'
+    end
     object mMsg: TMemo
       Left = 0
       Top = 384
-      Width = 943
+      Width = 995
       Height = 157
       Align = alBottom
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
+      ExplicitWidth = 943
     end
     object Button2: TButton
       Left = 6
@@ -197,7 +182,7 @@ object fmViewSignal: TfmViewSignal
       TabOrder = 4
     end
     object Button6: TButton
-      Left = 399
+      Left = 559
       Top = 353
       Width = 114
       Height = 25
@@ -205,16 +190,18 @@ object fmViewSignal: TfmViewSignal
       TabOrder = 5
     end
     object cxAusgabe: TCheckBox
-      Left = 519
+      Left = 923
       Top = 361
       Width = 66
       Height = 17
+      Anchors = [akTop, akRight]
       Caption = 'Ausgabe'
       TabOrder = 6
+      ExplicitLeft = 871
     end
-    object cbCheckSignale: TComboBox
-      Left = 399
-      Top = 326
+    object cbCheckAllPosture: TComboBox
+      Left = 679
+      Top = 334
       Width = 114
       Height = 21
       Style = csDropDownList
@@ -225,6 +212,183 @@ object fmViewSignal: TfmViewSignal
         'nur sitzend'
         'nur stehend'
         'nur gehend')
+    end
+    object cbUsability: TComboBox
+      Left = 134
+      Top = 255
+      Width = 123
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 8
+      OnChange = acChangeUsabilityExecute
+      Items.Strings = (
+        '- nicht ausgew'#228'hlt -'
+        'sehr gut'
+        'brauchbar'
+        'schlecht')
+    end
+    object cbCheckAllUsability: TComboBox
+      Left = 679
+      Top = 357
+      Width = 114
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 9
+      Items.Strings = (
+        '- alle Signale -'
+        'nur "sehr gute" Signale'
+        'nur "brauchbare" Signale'
+        'nur "schlechte" Signale')
+    end
+  end
+  object pnLeft: TPanel
+    Left = 0
+    Top = 45
+    Width = 385
+    Height = 541
+    Align = alLeft
+    BevelOuter = bvNone
+    TabOrder = 3
+    object lvSignale: TListView
+      Left = 0
+      Top = 121
+      Width = 385
+      Height = 420
+      Align = alClient
+      Columns = <
+        item
+          Caption = 'Nr'
+          Width = 35
+        end
+        item
+          Caption = 'Session'
+          Width = 90
+        end
+        item
+          Caption = 'Person'
+          Width = 80
+        end
+        item
+          Caption = 'Channel'
+          Width = 75
+        end
+        item
+          Caption = 'Zustand'
+          Width = 75
+        end
+        item
+          Caption = 'Lage'
+          Width = 75
+        end>
+      GridLines = True
+      ReadOnly = True
+      RowSelect = True
+      TabOrder = 0
+      ViewStyle = vsReport
+      OnDblClick = lvSignaleDblClick
+      ExplicitLeft = 1
+      ExplicitTop = 105
+      ExplicitWidth = 328
+      ExplicitHeight = 435
+    end
+    object pnDbFilter: TPanel
+      Left = 0
+      Top = 0
+      Width = 385
+      Height = 121
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 1
+      DesignSize = (
+        385
+        121)
+      object Label2: TLabel
+        Left = 8
+        Top = 6
+        Width = 151
+        Height = 13
+        Caption = 'Datenbank-Filter '#39'ecgdata'#39
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold, fsUnderline]
+        ParentFont = False
+      end
+      object Label3: TLabel
+        Left = 8
+        Top = 32
+        Width = 36
+        Height = 13
+        Caption = 'Session'
+      end
+      object Label4: TLabel
+        Left = 8
+        Top = 59
+        Width = 33
+        Height = 13
+        Caption = 'Person'
+      end
+      object Label5: TLabel
+        Left = 198
+        Top = 32
+        Width = 39
+        Height = 13
+        Caption = 'Channel'
+      end
+      object Label6: TLabel
+        Left = 198
+        Top = 59
+        Width = 66
+        Height = 13
+        Caption = 'Brauchbarkeit'
+      end
+      object Button7: TButton
+        Left = 304
+        Top = 90
+        Width = 75
+        Height = 25
+        Action = acLoadDb
+        Anchors = [akRight, akBottom]
+        TabOrder = 0
+      end
+      object cbFSession: TComboBox
+        Left = 56
+        Top = 29
+        Width = 113
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 1
+      end
+      object cbFPerson: TComboBox
+        Left = 56
+        Top = 56
+        Width = 113
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 2
+      end
+      object cbFChannel: TComboBox
+        Left = 266
+        Top = 29
+        Width = 113
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 3
+      end
+      object cbFUsability: TComboBox
+        Left = 266
+        Top = 56
+        Width = 113
+        Height = 21
+        Style = csDropDownList
+        TabOrder = 4
+        Items.Strings = (
+          '- nicht ausgew'#228'hlt -'
+          'sehr gut'
+          'brauchbar'
+          'schlecht')
+      end
     end
   end
   object tStartup: TTimer
@@ -262,6 +426,14 @@ object fmViewSignal: TfmViewSignal
     object acCheckAllSignals: TAction
       Caption = 'Alle Signale pr'#252'fen'
       OnExecute = acCheckAllSignalsExecute
+    end
+    object acChangeUsability: TAction
+      Caption = '&Brauchbarkeits-Merkmal '#228'ndern'
+      OnExecute = acChangeUsabilityExecute
+    end
+    object acLoadDb: TAction
+      Caption = '&Laden'
+      OnExecute = acLoadDbExecute
     end
   end
 end

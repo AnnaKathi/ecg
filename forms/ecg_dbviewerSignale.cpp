@@ -48,7 +48,18 @@ void __fastcall TfmViewSignal::tStartupTimer(TObject *Sender)
 	{
 	tStartup->Enabled = false;
 	ftools.FormLoad(this);
-    LoadSignale();
+	fmysql.sessions.listInCombo(cbFSession, 1);
+	fmysql.people.listInCombo(cbFPerson, 2);
+	fmysql.channels.listInCombo(cbFChannel, 1);
+
+	LoadSignale();
+	pnClient->Visible = true;
+
+	TListItem* item = lvSignale->Items->Item[0];
+    lvSignale->Selected = item;
+	int id = (int)item->Data;
+	ShowSignal(id);
+	GetRpeaks(id);
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::FormClose(TObject *Sender, TCloseAction &Action)
@@ -77,22 +88,36 @@ void TfmViewSignal::print(char* msg, ...)
 	va_end(argptr);
 	}
 //---------------------------------------------------------------------------
+int TfmViewSignal::getSelectedListItem()
+	{
+	if (lvSignale->SelCount <= 0) return -1;
+	TListItem* item = lvSignale->Selected;
+	int id = (int)item->Data;
+	return id;
+	}
+//---------------------------------------------------------------------------
+/***************************************************************************/
+/************   Funktionen: Daten laden, anzeigen und ändern   *************/
+/***************************************************************************/
+//---------------------------------------------------------------------------
 void TfmViewSignal::LoadSignale()
 	{
-lvSignale->Items->Clear();
-	if (!fmysql.ecg.loadTable())
+	lvSignale->Items->Clear();
+	sEcgData filter = BuildFilter();
+	if (!fmysql.ecg.loadFilteredTable(filter))
 		{
 		ftools.ErrBox("Die Datenbank 'ecgdata' konnte nicht geladen werden. "
-			"Die Klasse cMySql meldet: %s", fmysql.ecg.error_msg);
+			"Die Klasse cMySql meldet: %s", AnsiString(fmysql.ecg.error_msg));
 		return;
 		}
 
-	ftools.JobStart(pbJob, fmysql.ecg.getSize());
+	ftools.JobStart(pbJob, fmysql.ecg.num_rows);
 	TListItem* item;
+	sEcgData data;
 	while (fmysql.ecg.nextRow())
 		{
-        ftools.JobTick();
-		sEcgData data = fmysql.ecg.row;
+		ftools.JobTick();
+		data = fmysql.ecg.row;
 		item = lvSignale->Items->Add();
 		item->Data     = (void*)data.ident;
 		item->Caption  = String(data.ident);
@@ -106,21 +131,54 @@ lvSignale->Items->Clear();
 	ftools.JobEnd();
 	}
 //---------------------------------------------------------------------------
+sEcgData TfmViewSignal::BuildFilter()
+	{
+	sEcgData filter;
+	filter.session   = cbFSession->ItemIndex;
+	filter.person    = cbFPerson->ItemIndex;
+	filter.channel   = cbFChannel->ItemIndex;
+	filter.usability = cbFUsability->ItemIndex;
+
+    //todo
+	filter.state    = 0;
+	filter.posture  = 0;
+	filter.bpsys    = 0;
+	filter.bpdia    = 0;
+	filter.puls     = 0;
+	filter.visBeats = 0;
+	filter.note     = "";
+	return filter;
+	}
+//---------------------------------------------------------------------------
 void TfmViewSignal::ShowSignal(int id)
 	{
 	mMsg->Lines->Clear();
 	if (!fmysql.ecg.loadByIdent(id))
 		{
 		ftools.ErrBox("Das EKG-Signal <%d> kann nicht geladen werden. "
-			"Die Klasse cMySql meldet: %s", id, fmysql.ecg.error_msg);
+			"Die Klasse cEcg meldet: %s", id, AnsiString(fmysql.ecg.error_msg));
 		return;
 		}
 
 	fecg.data.getFromDb(fmysql.ecg.row.array_werte);
 	fecg.data.redisplay(img);
+    cbUsability->ItemIndex = fmysql.ecg.row.usability;
 
 	print("Visuell identifizierte R-Peaks: \t%d", fmysql.ecg.row.visBeats);
 	}
+//---------------------------------------------------------------------------
+void TfmViewSignal::SaveUsability(int id, int usability)
+	{
+	if (!fmysql.ecg.update("usability", usability, id))
+		{
+		ftools.ErrBox("Das EKG-Signal <%d> konnte nicht geändert werden. "
+			"Die Klasse cMySql meldet: %s", id, AnsiString(fmysql.ecg.error_msg));
+		}
+	}
+//---------------------------------------------------------------------------
+/***************************************************************************/
+/***********   Funktionen: RPeaks für dieses Signal berechnen   ************/
+/***************************************************************************/
 //---------------------------------------------------------------------------
 void TfmViewSignal::GetRpeaks(int id)
 	{
@@ -128,7 +186,7 @@ void TfmViewSignal::GetRpeaks(int id)
 	if (!fecg.data.buildDerivates())
 		{
 		ftools.ErrBox("Es konnten keine Ableitungen gebildet werden. "
-			"Die Klasse cData meldet: %s", fecg.data.error_msg);
+			"Die Klasse cData meldet: %s", AnsiString(fecg.data.error_msg));
 		return;
 		}
 
@@ -137,7 +195,7 @@ void TfmViewSignal::GetRpeaks(int id)
 	if (anz <= 0)
 		{
 		ftools.ErrBox("Es konnten keine (Ableitung-)R-Peaks ermittelt werden. "
-			"Die Klasse cData meldet: %s", fecg.data.error_msg);
+			"Die Klasse cData meldet: %s", AnsiString(fecg.data.error_msg));
 		return;
 		}
 
@@ -146,7 +204,7 @@ void TfmViewSignal::GetRpeaks(int id)
 	if (anz <= 0)
 		{
 		ftools.ErrBox("Es konnten keine (Original-)R-Peaks ermittelt werden. "
-			"Die Klasse cData meldet: %s", fecg.data.error_msg);
+			"Die Klasse cData meldet: %s", AnsiString(fecg.data.error_msg));
 		return;
 		}
 
@@ -157,6 +215,11 @@ void TfmViewSignal::GetRpeaks(int id)
 		print("### %d Rpeaks gefunden = NICHT IDENTISCH", anz);
 	}
 //---------------------------------------------------------------------------
+/***************************************************************************/
+/*********   Funktionen: RPeaks für alle Signale berechnen   ***************/
+/***************************************************************************/
+//---------------------------------------------------------------------------
+//todo: in Klasse Rpeaks auslagern
 void TfmViewSignal::CheckAllSignals()
 	{
 	int rpeaks_erwartet = 0;
@@ -165,11 +228,12 @@ void TfmViewSignal::CheckAllSignals()
 	int signal_falsch   = 0;
 
 	//Todo: nur die gewünschten Datensätze laden (posture)
-	int posture = cbCheckSignale->ItemIndex;
+	int posture   = cbCheckAllPosture->ItemIndex;
+	int usability = cbCheckAllUsability->ItemIndex;
 	if (!fmysql.ecg.loadTable())
 		{
 		ftools.ErrBox("Die Tabelle ecgdata konnte nicht geladen werden. "
-			"Die Klasse cMySqlEcgData meldet: %s", fmysql.ecg.error_msg);
+			"Die Klasse cMySqlEcgData meldet: %s", AnsiString(fmysql.ecg.error_msg));
 		return;
 		}
 
@@ -180,15 +244,20 @@ void TfmViewSignal::CheckAllSignals()
 	int count = 0;
 	while (fmysql.ecg.nextRow())
 		{
-		count++;
 		ftools.JobTick();
-
 		if (posture > 0)
 			{
 			if (posture != fmysql.ecg.row.posture)
 				continue;
 			}
 
+		if (usability > 0)
+			{
+			if (usability != fmysql.ecg.row.usability)
+                continue;
+			}
+
+		count++;
 		if (CheckSignal(fmysql.ecg.row.ident, rpeaks_erwartet, rpeaks_gefunden))
 			{
 			signal_korrekt++;
@@ -200,7 +269,7 @@ void TfmViewSignal::CheckAllSignals()
 			if (bAusgabe) print("# Ecg <%03d> FALSCH berechnet", fmysql.ecg.row.ident);
 			}
 
-        if (bAbort) break;
+		if (bAbort) break;
 		}
 	ftools.JobEnd();
 
@@ -227,7 +296,7 @@ bool TfmViewSignal::CheckSignal(int id, int& rpeaks_erwartet, int& rpeaks_gefund
 	if (!fecg.data.buildDerivates())
 		{
 		ftools.ErrBox("Es konnten keine Ableitungen gebildet werden. "
-			"Die Klasse cData meldet: %s", fecg.data.error_msg);
+			"Die Klasse cData meldet: %s", AnsiString(fecg.data.error_msg));
 		bAbort = false;
 		return false;
 		}
@@ -237,7 +306,7 @@ bool TfmViewSignal::CheckSignal(int id, int& rpeaks_erwartet, int& rpeaks_gefund
 	if (anz <= 0)
 		{
 		ftools.ErrBox("Es konnten keine (Ableitung-)R-Peaks ermittelt werden. "
-			"Die Klasse cData meldet: %s", fecg.data.error_msg);
+			"Die Klasse cData meldet: %s", AnsiString(fecg.data.error_msg));
 		bAbort = false;
 		return false;
 		}
@@ -247,7 +316,7 @@ bool TfmViewSignal::CheckSignal(int id, int& rpeaks_erwartet, int& rpeaks_gefund
 	if (anz <= 0)
 		{
 		ftools.ErrBox("Es konnten keine (Original-)R-Peaks ermittelt werden. "
-			"Die Klasse cData meldet: %s", fecg.data.error_msg);
+			"Die Klasse cData meldet: %s", AnsiString(fecg.data.error_msg));
         bAbort = true;
 		return false;
 		}
@@ -267,6 +336,11 @@ bool TfmViewSignal::CheckSignal(int id, int& rpeaks_erwartet, int& rpeaks_gefund
 void __fastcall TfmViewSignal::acCloseExecute(TObject *Sender)
 	{
 	Close();
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmViewSignal::acLoadDbExecute(TObject *Sender)
+	{
+    LoadSignale();
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acPrevSignalExecute(TObject *Sender)
@@ -312,18 +386,25 @@ void __fastcall TfmViewSignal::acNextSignalExecute(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acShowSignalExecute(TObject *Sender)
 	{
-	if (lvSignale->SelCount <= 0) return;
-	TListItem* item = lvSignale->Selected;
-	int id = (int)item->Data;
+	int id = getSelectedListItem();
 	if (id <= 0) return;
 	ShowSignal(id);
 	}
 //---------------------------------------------------------------------------
+void __fastcall TfmViewSignal::acChangeUsabilityExecute(TObject *Sender)
+	{
+	int id = getSelectedListItem();
+	if (id <= 0) return;
+
+	int usability = cbUsability->ItemIndex;
+	if (usability <= 0) return;
+
+	SaveUsability(id, usability);
+	}
+//---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acCalcRpeaksExecute(TObject *Sender)
 	{
-	if (lvSignale->SelCount <= 0) return;
-	TListItem* item = lvSignale->Selected;
-	int id = (int)item->Data;
+	int id = getSelectedListItem();
 	if (id <= 0) return;
     GetRpeaks(id);
 	}
@@ -350,6 +431,25 @@ void __fastcall TfmViewSignal::lvSignaleDblClick(TObject *Sender)
 	{
 	acShowSignalExecute(Sender);
 	acCalcRpeaksExecute(Sender);
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmViewSignal::FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift)
+	{
+	 if (Shift.Contains(ssCtrl) && Key == 0x31)
+		{
+		cbUsability->ItemIndex = 1;
+		acChangeUsabilityExecute(Sender);
+		}
+	else if (Shift.Contains(ssCtrl) && Key == 0x32)
+		{
+		cbUsability->ItemIndex = 2;
+		acChangeUsabilityExecute(Sender);
+		}
+	else if (Shift.Contains(ssCtrl) && Key == 0x33)
+		{
+		cbUsability->ItemIndex = 3;
+		acChangeUsabilityExecute(Sender);
+		}
 	}
 //---------------------------------------------------------------------------
 
