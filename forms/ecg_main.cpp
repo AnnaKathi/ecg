@@ -207,7 +207,12 @@ void __fastcall TfmMain::acAnalyseEcgExecute(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::acAnalyseSignalExecute(TObject *Sender)
 	{
-	DlgDbViewerSignale(this);
+	DlgDbViewerSignale(this, true); //true = isSignale
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmMain::acAnalyseBeatsExecute(TObject *Sender)
+	{
+	DlgDbViewerSignale(this, false); //false = !isSignal
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmMain::acEcgFileAddExecute(TObject *Sender)

@@ -119,16 +119,13 @@ object fmViewSignal: TfmViewSignal
     BevelOuter = bvNone
     TabOrder = 2
     Visible = False
-    ExplicitLeft = 447
-    ExplicitTop = 47
-    ExplicitWidth = 943
     DesignSize = (
       995
       541)
     object img: TImage
       Left = 6
       Top = 48
-      Width = 923
+      Width = 979
       Height = 201
     end
     object Label1: TLabel
@@ -147,7 +144,6 @@ object fmViewSignal: TfmViewSignal
       ReadOnly = True
       ScrollBars = ssBoth
       TabOrder = 0
-      ExplicitWidth = 943
     end
     object Button2: TButton
       Left = 6
@@ -182,7 +178,7 @@ object fmViewSignal: TfmViewSignal
       TabOrder = 4
     end
     object Button6: TButton
-      Left = 559
+      Left = 495
       Top = 353
       Width = 114
       Height = 25
@@ -197,10 +193,9 @@ object fmViewSignal: TfmViewSignal
       Anchors = [akTop, akRight]
       Caption = 'Ausgabe'
       TabOrder = 6
-      ExplicitLeft = 871
     end
     object cbCheckAllPosture: TComboBox
-      Left = 679
+      Left = 615
       Top = 334
       Width = 114
       Height = 21
@@ -228,7 +223,7 @@ object fmViewSignal: TfmViewSignal
         'schlecht')
     end
     object cbCheckAllUsability: TComboBox
-      Left = 679
+      Left = 615
       Top = 357
       Width = 114
       Height = 21
@@ -240,6 +235,15 @@ object fmViewSignal: TfmViewSignal
         'nur "brauchbare" Signale'
         'nur "schlechte" Signale')
     end
+    object Button8: TButton
+      Left = 784
+      Top = 353
+      Width = 123
+      Height = 25
+      Action = acCreateBeats
+      TabOrder = 10
+      Visible = False
+    end
   end
   object pnLeft: TPanel
     Left = 0
@@ -249,7 +253,7 @@ object fmViewSignal: TfmViewSignal
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 3
-    object lvSignale: TListView
+    object lvData: TListView
       Left = 0
       Top = 121
       Width = 385
@@ -285,11 +289,7 @@ object fmViewSignal: TfmViewSignal
       RowSelect = True
       TabOrder = 0
       ViewStyle = vsReport
-      OnDblClick = lvSignaleDblClick
-      ExplicitLeft = 1
-      ExplicitTop = 105
-      ExplicitWidth = 328
-      ExplicitHeight = 435
+      OnDblClick = lvDataDblClick
     end
     object pnDbFilter: TPanel
       Left = 0
@@ -305,9 +305,9 @@ object fmViewSignal: TfmViewSignal
       object Label2: TLabel
         Left = 8
         Top = 6
-        Width = 151
+        Width = 96
         Height = 13
-        Caption = 'Datenbank-Filter '#39'ecgdata'#39
+        Caption = 'Datenbank-Filter'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11
@@ -434,6 +434,10 @@ object fmViewSignal: TfmViewSignal
     object acLoadDb: TAction
       Caption = '&Laden'
       OnExecute = acLoadDbExecute
+    end
+    object acCreateBeats: TAction
+      Caption = 'Herzschl'#228'ge erzeugen'
+      OnExecute = acCreateBeatsExecute
     end
   end
 end

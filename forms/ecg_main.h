@@ -64,6 +64,10 @@ __published:	// Von der IDE verwaltete Komponenten
 	TMenuItem *EKGSignaleanalysieren2;
 	TMenuItem *Features1;
 	TMenuItem *Klassifizierung1;
+	TMenuItem *HerzschlgeausEKGSignalenseparieren1;
+	TAction *acAnalyseBeats;
+	TMenuItem *Herzschlgeanalysieren1;
+	TMenuItem *Herzschlgeanalysieren2;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall tStartupTimer(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
@@ -73,6 +77,7 @@ __published:	// Von der IDE verwaltete Komponenten
 	void __fastcall acAnalyseSignalExecute(TObject *Sender);
 	void __fastcall btClassifySelectClick(TObject *Sender);
 	void __fastcall acCloseExecute(TObject *Sender);
+	void __fastcall acAnalyseBeatsExecute(TObject *Sender);
 
 private:
 	cMySql&     fmysql;
@@ -81,6 +86,8 @@ private:
 	bool 		setupDatabase();
 	void 		setStatus(String status, int panel = 0);
 	void 		setDbInfo();
+
+    void		CreateHeartbeats(); //todo auslagern in Klasse ??
 
 public:
 	__fastcall TfmMain(TComponent* Owner);

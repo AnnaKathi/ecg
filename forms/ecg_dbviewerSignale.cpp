@@ -10,21 +10,22 @@
 #pragma resource "*.dfm"
 TfmViewSignal *fmViewSignal;
 //---------------------------------------------------------------------------
-bool DlgDbViewerSignale(TForm* Papa)
+bool DlgDbViewerSignale(TForm* Papa, bool isSignal)
 	{
 	TfmViewSignal* Form = new TfmViewSignal(Papa);
 	bool rc = false;
 
 	if (Form)
 		{
-		rc = Form->Execute();
+		rc = Form->Execute(isSignal);
 		delete Form;
 		}
 	return rc;
 	}
 //---------------------------------------------------------------------------
-bool TfmViewSignal::Execute()
+bool TfmViewSignal::Execute(bool isSignal)
 	{
+    bIsSignal = isSignal;
 	ShowModal();
 	return true;
 	}
@@ -47,19 +48,23 @@ void __fastcall TfmViewSignal::FormCreate(TObject *Sender)
 void __fastcall TfmViewSignal::tStartupTimer(TObject *Sender)
 	{
 	tStartup->Enabled = false;
+	if (bIsSignal) Caption = "Datenbank-Viewer: Signale";
+	else Caption = "Datenbank-Viewer: Herzschläge";
+
 	ftools.FormLoad(this);
 	fmysql.sessions.listInCombo(cbFSession, 1);
 	fmysql.people.listInCombo(cbFPerson, 2);
 	fmysql.channels.listInCombo(cbFChannel, 1);
 
-	LoadSignale();
+	if (bIsSignal) LoadSignale();
+    else LoadBeats();
 	pnClient->Visible = true;
 
-	TListItem* item = lvSignale->Items->Item[0];
-    lvSignale->Selected = item;
+	TListItem* item = lvData->Items->Item[0];
+	lvData->Selected = item;
 	int id = (int)item->Data;
-	ShowSignal(id);
-	GetRpeaks(id);
+	ShowKurve(id);
+	if (bIsSignal) GetRpeaks(id);
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::FormClose(TObject *Sender, TCloseAction &Action)
@@ -90,8 +95,8 @@ void TfmViewSignal::print(char* msg, ...)
 //---------------------------------------------------------------------------
 int TfmViewSignal::getSelectedListItem()
 	{
-	if (lvSignale->SelCount <= 0) return -1;
-	TListItem* item = lvSignale->Selected;
+	if (lvData->SelCount <= 0) return -1;
+	TListItem* item = lvData->Selected;
 	int id = (int)item->Data;
 	return id;
 	}
@@ -102,12 +107,26 @@ int TfmViewSignal::getSelectedListItem()
 //---------------------------------------------------------------------------
 void TfmViewSignal::LoadSignale()
 	{
-	lvSignale->Items->Clear();
-	sEcgData filter = BuildFilter();
+	lvData->Items->Clear();
+	sEcgData filter;
+	filter.session   = cbFSession->ItemIndex;
+	filter.person    = cbFPerson->ItemIndex;
+	filter.channel   = cbFChannel->ItemIndex;
+	filter.usability = cbFUsability->ItemIndex;
+
+	//todo
+	filter.state    = 0;
+	filter.posture  = 0;
+	filter.bpsys    = 0;
+	filter.bpdia    = 0;
+	filter.puls     = 0;
+	filter.visBeats = 0;
+	filter.note     = "";
+
 	if (!fmysql.ecg.loadFilteredTable(filter))
 		{
 		ftools.ErrBox("Die Datenbank 'ecgdata' konnte nicht geladen werden. "
-			"Die Klasse cMySql meldet: %s", AnsiString(fmysql.ecg.error_msg));
+			"Die Klasse cMySqlEcg meldet: %s", AnsiString(fmysql.ecg.error_msg));
 		return;
 		}
 
@@ -118,7 +137,7 @@ void TfmViewSignal::LoadSignale()
 		{
 		ftools.JobTick();
 		data = fmysql.ecg.row;
-		item = lvSignale->Items->Add();
+		item = lvData->Items->Add();
 		item->Data     = (void*)data.ident;
 		item->Caption  = String(data.ident);
 		item->SubItems->Add(fmysql.sessions.getStampOf(data.session));
@@ -131,48 +150,97 @@ void TfmViewSignal::LoadSignale()
 	ftools.JobEnd();
 	}
 //---------------------------------------------------------------------------
-sEcgData TfmViewSignal::BuildFilter()
+void TfmViewSignal::LoadBeats()
 	{
-	sEcgData filter;
+	lvData->Items->Clear();
+	sBeatData filter;
+	filter.ident     = 0;
+    filter.ecgdata   = 0;
 	filter.session   = cbFSession->ItemIndex;
 	filter.person    = cbFPerson->ItemIndex;
 	filter.channel   = cbFChannel->ItemIndex;
 	filter.usability = cbFUsability->ItemIndex;
 
-    //todo
+	//todo
 	filter.state    = 0;
 	filter.posture  = 0;
-	filter.bpsys    = 0;
-	filter.bpdia    = 0;
-	filter.puls     = 0;
-	filter.visBeats = 0;
-	filter.note     = "";
-	return filter;
-	}
-//---------------------------------------------------------------------------
-void TfmViewSignal::ShowSignal(int id)
-	{
-	mMsg->Lines->Clear();
-	if (!fmysql.ecg.loadByIdent(id))
+
+	if (!fmysql.beats.loadFilteredTable(filter))
 		{
-		ftools.ErrBox("Das EKG-Signal <%d> kann nicht geladen werden. "
-			"Die Klasse cEcg meldet: %s", id, AnsiString(fmysql.ecg.error_msg));
+		ftools.ErrBox("Die Datenbank 'heartbeats' konnte nicht geladen werden. "
+			"Die Klasse cMySqlBeats meldet: %s", AnsiString(fmysql.beats.error_msg));
 		return;
 		}
 
-	fecg.data.getFromDb(fmysql.ecg.row.array_werte);
-	fecg.data.redisplay(img);
-    cbUsability->ItemIndex = fmysql.ecg.row.usability;
+	ftools.JobStart(pbJob, fmysql.beats.num_rows);
+	TListItem* item;
+	sBeatData data;
+	while (fmysql.beats.nextRow())
+		{
+		ftools.JobTick();
+		data = fmysql.beats.row;
+		item = lvData->Items->Add();
+		item->Data     = (void*)data.ident;
+		item->Caption  = String(data.ident);
+		item->SubItems->Add(fmysql.sessions.getStampOf(data.session));
+		item->SubItems->Add(fmysql.people.getNameOf(data.person));
+		item->SubItems->Add(fmysql.channels.getNameOf(data.channel));
+		item->SubItems->Add(fmysql.states.getNameOf(data.state));
+		item->SubItems->Add(fmysql.postures.getNameOf(data.posture));
+		}
 
-	print("Visuell identifizierte R-Peaks: \t%d", fmysql.ecg.row.visBeats);
+	ftools.JobEnd();
+	}
+//---------------------------------------------------------------------------
+void TfmViewSignal::ShowKurve(int id)
+	{
+	mMsg->Lines->Clear();
+    iarray_t daten;
+	if (bIsSignal)
+		{
+		if (!fmysql.ecg.loadByIdent(id))
+			{
+			ftools.ErrBox("Das EKG-Signal <%d> kann nicht geladen werden. "
+				"Die Klasse cEcg meldet: %s", id, AnsiString(fmysql.ecg.error_msg));
+			return;
+			}
+		daten = fmysql.ecg.row.array_werte;
+		cbUsability->ItemIndex = fmysql.ecg.row.usability;
+		print("Visuell identifizierte R-Peaks: \t%d", fmysql.ecg.row.visBeats);
+		}
+	else
+		{
+		if (!fmysql.beats.loadByIdent(id))
+			{
+			ftools.ErrBox("Der EKG-Herzschlag <%d> kann nicht geladen werden. "
+				"Die Klasse cBeats meldet: %s", id, AnsiString(fmysql.beats.error_msg));
+			return;
+			}
+		daten = fmysql.beats.row.array_werte;
+		cbUsability->ItemIndex = fmysql.beats.row.usability;
+		}
+
+	fecg.data.getFromDb(daten);
+	fecg.data.redisplay(img);
 	}
 //---------------------------------------------------------------------------
 void TfmViewSignal::SaveUsability(int id, int usability)
 	{
-	if (!fmysql.ecg.update("usability", usability, id))
+	if (bIsSignal)
 		{
-		ftools.ErrBox("Das EKG-Signal <%d> konnte nicht geändert werden. "
-			"Die Klasse cMySql meldet: %s", id, AnsiString(fmysql.ecg.error_msg));
+		if (!fmysql.ecg.update("usability", usability, id))
+			{
+			ftools.ErrBox("Das EKG-Signal <%d> konnte nicht geändert werden. "
+				"Die Klasse cMySqlEcg meldet: %s", id, AnsiString(fmysql.ecg.error_msg));
+			}
+		}
+	else
+		{
+		if (!fmysql.beats.update("usability", usability, id))
+			{
+			ftools.ErrBox("Der EKG-Herzschlag <%d> konnte nicht geändert werden. "
+				"Die Klasse cMySqlBeats meldet: %s", id, AnsiString(fmysql.beats.error_msg));
+			}
 		}
 	}
 //---------------------------------------------------------------------------
@@ -182,6 +250,8 @@ void TfmViewSignal::SaveUsability(int id, int usability)
 //---------------------------------------------------------------------------
 void TfmViewSignal::GetRpeaks(int id)
 	{
+	if (!bIsSignal) return;
+
 	//Daten sind schon von ShowSignal geladen worden
 	if (!fecg.data.buildDerivates())
 		{
@@ -222,6 +292,8 @@ void TfmViewSignal::GetRpeaks(int id)
 //todo: in Klasse Rpeaks auslagern
 void TfmViewSignal::CheckAllSignals()
 	{
+	if (!bIsSignal) return;
+
 	int rpeaks_erwartet = 0;
 	int rpeaks_gefunden = 0;
 	int signal_korrekt  = 0;
@@ -292,6 +364,8 @@ void TfmViewSignal::CheckAllSignals()
 //---------------------------------------------------------------------------
 bool TfmViewSignal::CheckSignal(int id, int& rpeaks_erwartet, int& rpeaks_gefunden)
 	{
+	if (!bIsSignal) return false;
+
 	fecg.data.getFromDb(fmysql.ecg.row.array_werte);
 	if (!fecg.data.buildDerivates())
 		{
@@ -330,6 +404,114 @@ bool TfmViewSignal::CheckSignal(int id, int& rpeaks_erwartet, int& rpeaks_gefund
 	}
 //---------------------------------------------------------------------------
 /***************************************************************************/
+/*********   Funktionen: Herzschläge aus den Signalen berechnen  ***********/
+/***************************************************************************/
+//---------------------------------------------------------------------------
+//todo: in Klasse ??? auslagern
+void TfmViewSignal::CreateHeartbeats()
+	{
+	if (!bIsSignal) return;
+
+	//erstmal nur "gute" Signale verwenden, todo: einstellen lassen, was gewünscht ist
+	sEcgData filter;
+	filter.usability = 1;
+    filter.ident     = 0;
+	filter.session   = 0;
+	filter.person    = 0;
+	filter.channel   = 0;
+	filter.state     = 0;
+	filter.posture   = 0;
+	filter.bpsys     = 0;
+	filter.bpdia     = 0;
+	filter.puls      = 0;
+	filter.visBeats  = 0;
+	filter.note      = "";
+
+	if (!fmysql.ecg.loadFilteredTable(filter))
+		{
+		ftools.ErrBox("Die Datenbank 'ecgdata' konnte nicht geladen werden. "
+			"Die Klasse cMySqlEcgData meldet: %s", AnsiString(fmysql.ecg.error_msg));
+		return;
+		}
+
+	bool bAusgabe = cxAusgabe->Checked;
+	sEcgData data; sBeatData beat;
+
+    ftools.JobStart(pbJob, fmysql.ecg.num_rows);
+	int count_newbeats = 0;
+	while (fmysql.ecg.nextRow())
+		{
+        ftools.JobTick();
+		data = fmysql.ecg.row;
+		if (!fecg.data.getFromDb(data.array_werte))
+			{
+			if (bAusgabe) print("### EKG <%d> konnte nicht geladen werden, die Klasse cEcg meldet: %s", data.ident, fecg.data.error_msg);
+			continue;
+			}
+		else
+			{
+			if (bAusgabe)
+				print("--> EKG <%d> geladen", data.ident);
+			}
+
+		iarray_t rpeaks = fecg.rpeaks.find(fecg.data.data_array, NULL);
+		if (rpeaks.size() <= 0)
+			{
+			if (bAusgabe) print("\t### Rpeaks des EKG <%d> konnten nicht gebildet werden, die Klasse cRpeak meldet: %s", data.ident, fecg.rpeaks.error_msg);
+			continue;
+			}
+		else
+			{
+			if (bAusgabe)
+				print("\t--> RPeaks von EKG <%d> gebildet", data.ident);
+			}
+
+		if (!fecg.heart.reset(fecg.data.data_array, rpeaks))
+			{
+			if (bAusgabe) print("\t### Heartbeats des EKG <%d> konnten nicht gebildet werden, die Klasse cHeartbeat meldet: %s", data.ident, fecg.heart.error_msg);
+			continue;
+			}
+		else
+			{
+			if (bAusgabe)
+				print("\t--> Heartbeats von EKG <%d> gebildet", data.ident);
+			}
+
+		beat.ecgdata   = data.ident;
+		beat.session   = data.session;
+		beat.person    = data.person;
+		beat.channel   = data.channel;
+		beat.state     = data.state;
+		beat.posture   = data.posture;
+		beat.usability = 0; //muss noch beurteilt werden
+		beat.nummer    = 0;
+
+		while (fecg.heart.next())
+			{
+			beat.nummer++;
+			beat.array_werte = fecg.heart.heartbeat;
+			if (fmysql.beats.saveWithArray(beat))
+				{
+				count_newbeats++;
+				if (bAusgabe) print("\t--> Beat %d gespeichert", beat.nummer);
+				}
+			else
+				{
+				if (bAusgabe) print("\t### Beat %d konnte nicht gespeichert werden, die Klasse cMySqlHeartbeats meldet: %s", beat.nummer, fmysql.beats.error_msg);
+				}
+			}
+		}
+
+	ftools.JobEnd();
+	print("--------------------------------------");
+	print("");
+	print("Auswertung:");
+	print("\tSignale bearbeitet: \t\t%d", fmysql.ecg.num_rows);
+	print("\tHerzschläge gebildet: \t%d", count_newbeats);
+	print("");
+	}
+//---------------------------------------------------------------------------
+/***************************************************************************/
 /********************   Actions   ******************************************/
 /***************************************************************************/
 //---------------------------------------------------------------------------
@@ -340,44 +522,45 @@ void __fastcall TfmViewSignal::acCloseExecute(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acLoadDbExecute(TObject *Sender)
 	{
-    LoadSignale();
+	if (bIsSignal) LoadSignale();
+	else LoadBeats();
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acPrevSignalExecute(TObject *Sender)
 	{
-	if (lvSignale->Items->Count <= 0) return;
-	if (lvSignale->Selected == NULL || lvSignale->ItemIndex == 0)
+	if (lvData->Items->Count <= 0) return;
+	if (lvData->Selected == NULL || lvData->ItemIndex == 0)
 		{
-		TListItem* item = lvSignale->Items->Item[0];
-		lvSignale->Selected = item;
+		TListItem* item = lvData->Items->Item[0];
+		lvData->Selected = item;
 		}
 	else
 		{
-		int ix = lvSignale->ItemIndex -1;
+		int ix = lvData->ItemIndex -1;
 		if (ix < 0) ix = 0;
-		TListItem* item = lvSignale->Items->Item[ix];
-		lvSignale->Selected = item;
+		TListItem* item = lvData->Items->Item[ix];
+		lvData->Selected = item;
 		}
 
 	acShowSignalExecute(Sender);
-    acCalcRpeaksExecute(Sender);
+	acCalcRpeaksExecute(Sender);
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acNextSignalExecute(TObject *Sender)
 	{
-	if (lvSignale->Items->Count <= 0) return;
-	int last = lvSignale->Items->Count-1;
-	if (lvSignale->Selected == NULL || lvSignale->ItemIndex == last)
+	if (lvData->Items->Count <= 0) return;
+	int last = lvData->Items->Count-1;
+	if (lvData->Selected == NULL || lvData->ItemIndex == last)
 		{
-		TListItem* item = lvSignale->Items->Item[last];
-		lvSignale->Selected = item;
+		TListItem* item = lvData->Items->Item[last];
+		lvData->Selected = item;
 		}
 	else
 		{
-		int ix = lvSignale->ItemIndex+1;
+		int ix = lvData->ItemIndex+1;
 		if (ix > last) ix = last;
-		TListItem* item = lvSignale->Items->Item[ix];
-		lvSignale->Selected = item;
+		TListItem* item = lvData->Items->Item[ix];
+		lvData->Selected = item;
 		}
 
 	acShowSignalExecute(Sender);
@@ -388,7 +571,7 @@ void __fastcall TfmViewSignal::acShowSignalExecute(TObject *Sender)
 	{
 	int id = getSelectedListItem();
 	if (id <= 0) return;
-	ShowSignal(id);
+	ShowKurve(id);
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acChangeUsabilityExecute(TObject *Sender)
@@ -404,14 +587,22 @@ void __fastcall TfmViewSignal::acChangeUsabilityExecute(TObject *Sender)
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acCalcRpeaksExecute(TObject *Sender)
 	{
+	if (!bIsSignal) return;
 	int id = getSelectedListItem();
 	if (id <= 0) return;
-    GetRpeaks(id);
+	GetRpeaks(id);
 	}
 //---------------------------------------------------------------------------
 void __fastcall TfmViewSignal::acCheckAllSignalsExecute(TObject *Sender)
 	{
+	if (!bIsSignal) return;
 	CheckAllSignals();
+	}
+//---------------------------------------------------------------------------
+void __fastcall TfmViewSignal::acCreateBeatsExecute(TObject *Sender)
+	{
+	if (!bIsSignal) return;
+	CreateHeartbeats();
 	}
 //---------------------------------------------------------------------------
 /***************************************************************************/
@@ -427,7 +618,7 @@ void __fastcall TfmViewSignal::FormKeyPress(TObject *Sender, System::WideChar &K
 		}
 	}
 //---------------------------------------------------------------------------
-void __fastcall TfmViewSignal::lvSignaleDblClick(TObject *Sender)
+void __fastcall TfmViewSignal::lvDataDblClick(TObject *Sender)
 	{
 	acShowSignalExecute(Sender);
 	acCalcRpeaksExecute(Sender);

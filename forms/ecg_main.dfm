@@ -2,7 +2,7 @@ object fmMain: TfmMain
   Left = 0
   Top = 0
   Caption = 'Projekt ecg'
-  ClientHeight = 303
+  ClientHeight = 302
   ClientWidth = 956
   Color = clWindow
   Font.Charset = DEFAULT_CHARSET
@@ -31,7 +31,7 @@ object fmMain: TfmMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 284
+    Top = 283
     Width = 956
     Height = 19
     Panels = <
@@ -44,8 +44,7 @@ object fmMain: TfmMain
       item
         Width = 100
       end>
-    ExplicitTop = 589
-    ExplicitWidth = 729
+    ExplicitTop = 264
   end
   object pnInfo: TPanel
     Left = 0
@@ -56,8 +55,6 @@ object fmMain: TfmMain
     BevelOuter = bvNone
     ParentColor = True
     TabOrder = 1
-    ExplicitLeft = -179
-    ExplicitWidth = 1026
     DesignSize = (
       956
       41)
@@ -79,22 +76,18 @@ object fmMain: TfmMain
       ParentFont = False
       ReadOnly = True
       TabOrder = 0
-      ExplicitWidth = 1010
     end
   end
   object pnMain: TPanel
     Left = 0
     Top = 45
     Width = 956
-    Height = 239
+    Height = 238
     Align = alClient
     BevelOuter = bvNone
     Enabled = False
     TabOrder = 2
-    ExplicitLeft = 8
-    ExplicitTop = 41
-    ExplicitWidth = 1065
-    ExplicitHeight = 474
+    ExplicitHeight = 219
     object btAnalysis: TBitBtn
       Left = 8
       Top = 10
@@ -4400,9 +4393,15 @@ object fmMain: TfmMain
       object EKGSignaleanalysieren2: TMenuItem
         Action = acAnalyseSignal
       end
+      object Herzschlgeanalysieren2: TMenuItem
+        Action = acAnalyseBeats
+      end
     end
     object Datenbank1: TMenuItem
       Caption = 'Daten&bank'
+      object HerzschlgeausEKGSignalenseparieren1: TMenuItem
+        Caption = 'Herzschl'#228'ge aus EKG-Signalen separieren'
+      end
     end
     object Session1: TMenuItem
       Caption = '&Session'
@@ -4433,6 +4432,10 @@ object fmMain: TfmMain
       Caption = 'EKG-Signale analysieren'
       OnExecute = acAnalyseSignalExecute
     end
+    object acAnalyseBeats: TAction
+      Caption = 'Herzschl'#228'ge analysieren'
+      OnExecute = acAnalyseBeatsExecute
+    end
   end
   object PopupMenuAnalysis: TPopupMenu
     Left = 184
@@ -4445,6 +4448,9 @@ object fmMain: TfmMain
     end
     object EKGSignaleanalysieren1: TMenuItem
       Action = acAnalyseSignal
+    end
+    object Herzschlgeanalysieren1: TMenuItem
+      Action = acAnalyseBeats
     end
   end
   object ActionListDatabase: TActionList

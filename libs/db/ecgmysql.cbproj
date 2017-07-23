@@ -124,6 +124,11 @@
             <DependentOn>classMySql_Features.h</DependentOn>
             <BuildOrder>6</BuildOrder>
         </CppCompile>
+        <CppCompile Include="classMySql_Heartbeats.cpp">
+            <VirtualFolder>{FB2A546D-2F73-48D3-9EB1-7D7B91CAFC1D}</VirtualFolder>
+            <DependentOn>classMySql_Heartbeats.h</DependentOn>
+            <BuildOrder>12</BuildOrder>
+        </CppCompile>
         <CppCompile Include="classMySql_People.cpp">
             <VirtualFolder>{FB2A546D-2F73-48D3-9EB1-7D7B91CAFC1D}</VirtualFolder>
             <DependentOn>classMySql_People.h</DependentOn>
@@ -191,9 +196,8 @@
                 </Excluded_Packages>
             </CPlusPlusBuilder.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="..\..\out\bin\ecgmysql.dll" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin\cc32250mt.dll" Class="DependencyModule">
                     <Platform Name="Win32">
-                        <RemoteName>ecgmysql.dll</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -248,8 +252,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile Condition="'$(DynamicRTL)'=='true' And '$(Multithreaded)'=='true'" LocalName="$(BDS)\bin\cc32250mt.dll" Class="DependencyModule">
+                <DeployFile LocalName="..\..\out\bin\ecgmysql.dll" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
+                        <RemoteName>ecgmysql.dll</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

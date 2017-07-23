@@ -8,6 +8,7 @@
 #include <libs/core/classTools.h>
 #include "classMySql_Work.h"
 #include "classMySql_EcgData.h"
+#include "classMySql_Heartbeats.h"
 #include "classMySql_People.h"
 #include "classMySql_Session.h"
 #include "classMySql_Features.h"
@@ -33,10 +34,11 @@ public:
 
 	bool	listTabs(TListView* lv);
 
-__property cMySqlEcgData&  ecg      = { read=get_ecg };
-__property cMySqlPeople&   people   = { read=get_people   };
-__property cMySqlSession&  sessions = { read=get_sessions };
-__property cMySqlFeature&  features = { read=get_features };
+__property cMySqlEcgData&    ecg      = { read=get_ecg };
+__property cMySqlHeartbeats& beats    = { read=get_beat };
+__property cMySqlPeople&     people   = { read=get_people   };
+__property cMySqlSession&    sessions = { read=get_sessions };
+__property cMySqlFeature&    features = { read=get_features };
 
 __property cMySqlDescDb&   researchers = { read=get_researchers  };
 __property cMySqlDescDb&   algpreproc  = { read=get_alg_preproc  };
@@ -56,6 +58,9 @@ private:
 
 	cMySqlEcgData*	fecg;
 	cMySqlEcgData&  get_ecg();
+
+	cMySqlHeartbeats*  fbeat;
+	cMySqlHeartbeats&  get_beat();
 
 	cMySqlPeople*	fpeople;
 	cMySqlPeople&	get_people();

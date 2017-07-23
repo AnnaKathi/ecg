@@ -52,6 +52,7 @@ void cMySql::init()
 	{
 	//todo -oms: bitte nach refac aus klasse entfernern
 	fecg      = new cMySqlEcgData();
+	fbeat     = new cMySqlHeartbeats();
 	fpeople   = new cMySqlPeople();
 	fsessions = new cMySqlSession();
 	ffeatures = new cMySqlFeature();
@@ -75,6 +76,7 @@ void cMySql::shutdown()
 	{
 //	if (fwork)     delete fwork;
 	if (fecg)      delete fecg;
+	if (fbeat)     delete fbeat;
 	if (fpeople)   delete fpeople;
 	if (fsessions) delete fsessions;
 	if (ffeatures) delete ffeatures;
@@ -210,6 +212,11 @@ bool cMySql::listTabs(TListView* lv)
 cMySqlEcgData& cMySql::get_ecg()
 	{
 	return *fecg;
+	}
+//---------------------------------------------------------------------------
+cMySqlHeartbeats& cMySql::get_beat()
+	{
+	return *fbeat;
 	}
 //---------------------------------------------------------------------------
 cMySqlPeople& cMySql::get_people()

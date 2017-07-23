@@ -49,7 +49,7 @@ __published:	// Von der IDE verwaltete Komponenten
 	TAction *acChangeUsability;
 	TComboBox *cbCheckAllUsability;
 	TPanel *pnLeft;
-	TListView *lvSignale;
+	TListView *lvData;
 	TPanel *pnDbFilter;
 	TBevel *Bevel3;
 	TButton *Button7;
@@ -63,12 +63,14 @@ __published:	// Von der IDE verwaltete Komponenten
 	TComboBox *cbFChannel;
 	TLabel *Label6;
 	TComboBox *cbFUsability;
+	TButton *Button8;
+	TAction *acCreateBeats;
 	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall tStartupTimer(TObject *Sender);
 	void __fastcall FormClose(TObject *Sender, TCloseAction &Action);
 	void __fastcall FormKeyPress(TObject *Sender, System::WideChar &Key);
 	void __fastcall acCloseExecute(TObject *Sender);
-	void __fastcall lvSignaleDblClick(TObject *Sender);
+	void __fastcall lvDataDblClick(TObject *Sender);
 	void __fastcall acPrevSignalExecute(TObject *Sender);
 	void __fastcall acNextSignalExecute(TObject *Sender);
 	void __fastcall acShowSignalExecute(TObject *Sender);
@@ -77,12 +79,14 @@ __published:	// Von der IDE verwaltete Komponenten
 	void __fastcall acChangeUsabilityExecute(TObject *Sender);
 	void __fastcall FormKeyDown(TObject *Sender, WORD &Key, TShiftState Shift);
 	void __fastcall acLoadDbExecute(TObject *Sender);
+	void __fastcall acCreateBeatsExecute(TObject *Sender);
 
 private:
 	cMySql&     fmysql;
 	cTools      ftools;
 	cArray      farray;
 	cEcg        fecg;
+    bool        bIsSignal;
 
 	//-- Hilfsfunktionen
 	void 		print(char* msg, ...);
@@ -90,8 +94,8 @@ private:
 
 	//-- Daten laden, anzeigen und ändern
 	void 		LoadSignale();
-    sEcgData    BuildFilter();
-	void        ShowSignal(int id);
+	void 		LoadBeats();
+	void        ShowKurve(int id);
 	void        SaveUsability(int id, int usability);
 
 	//-- R-Peaks für dieses Signal berechnen
@@ -102,13 +106,16 @@ private:
 	void        CheckAllSignals();
 	bool 		CheckSignal(int id, int& rpeaks_erwartet, int& rpeaks_gefunden);
 
+	//-- Herzschläge berechnen, todo: auslagern in Klasse ??
+    void        CreateHeartbeats();
+
 public:
 	__fastcall TfmViewSignal(TComponent* Owner);
 	__fastcall ~TfmViewSignal();
 
-	bool 		Execute();
+	bool 		Execute(bool isSignal);
 };
 //---------------------------------------------------------------------------
-bool DlgDbViewerSignale(TForm* Papa);
+bool DlgDbViewerSignale(TForm* Papa, bool isSignal);
 //---------------------------------------------------------------------------
 #endif
